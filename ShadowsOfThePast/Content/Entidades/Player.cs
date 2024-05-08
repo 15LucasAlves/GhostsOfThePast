@@ -9,18 +9,21 @@ namespace ShadowsOfThePast
 {
     public class Player
     {
+        // HP and MP meter so we know how much hits can the player take and how much spells can he cast
+        public int healthPoints;
+        public int manaPoints;
+        // We need to know the player's position in the map to draw it in the right place on different levels
+        public int startingPosition;
+        // We need to know the player's score to open the portal eventually
+        public int score;
+        // We need to know if the player is alive or not so we can end the game
+        public bool isAlive;
+
         // Player constructor
         public Player()
         {
-            // HP and MP meter so we know how much hits can the player take and how much spells can he cast
-            int healthPoints = 3;
-            int manaPoints = 10;
-            // We need to know the player's position in the map to draw it in the right place on different levels
-            int startingPosition;
-            // We need to know the player's score to open the portal eventually
-            int score;
-            // We need to know if the player is alive or not so we can end the game
-            bool isAlive;
+            healthPoints = 3;
+            manaPoints = 10;
         }
 
 
@@ -84,13 +87,13 @@ namespace ShadowsOfThePast
         public void TakeDamage(Player player)
         {
             // Deal damage to the player
-            player.healhPoints -= 1;
+            player.healthPoints -= 1;
 
             // Check if the player should die
-            if (healthPoints <= 0)
+            if (player.healthPoints <= 0)
             {
                 // Player is dead
-                isAlive = false;
+                player.isAlive = false;
             }
         }
 
