@@ -13,6 +13,7 @@ namespace ShadowsOfThePast
         // Player constructor
         public Player()
         {
+<<<<<<< Updated upstream
             // HP and MP meter so we know how much hits can the player take and how much spells can he cast
             int healthPoints = 3;
             int manaPoints = 10;
@@ -22,6 +23,11 @@ namespace ShadowsOfThePast
             int score;
             // We need to know if the player is alive or not so we can end the game
             bool isAlive;
+=======
+            healthPoints = 3;
+            manaPoints = 10;
+            isAlive = true;
+>>>>>>> Stashed changes
         }
 
 
