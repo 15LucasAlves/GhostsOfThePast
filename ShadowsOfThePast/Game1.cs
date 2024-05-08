@@ -52,9 +52,6 @@ namespace ShadowsOfThePast
             base.Draw(gameTime);
         }
     }
-<<<<<<< Updated upstream
-}
-=======
 
     private Dictionary<Vector2, int> LoadMap(string filepath)
     {
@@ -245,4 +242,3 @@ namespace ShadowsOfThePast
         base.Draw(gameTime);
     }
 }
->>>>>>> Stashed changes
