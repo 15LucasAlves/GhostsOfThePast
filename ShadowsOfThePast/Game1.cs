@@ -34,16 +34,23 @@ public class Game1 : Game
         Content.RootDirectory = "Content";
         IsMouseVisible = true;
 
+        //loads all the csv maps from tiled into their respective dictionaries
         background = LoadMap("../../Data/level1_background.csv");
         platforms = LoadMap("../../Data/level1_platforms.csv");
         props = LoadMap("../../Data/level1_props.csv");
         house = LoadMap("../../Data/level1_house.csv");
         collisions = LoadMap("../../Data/level1_collisions.csv");
-        camera = Vector2.Zero;
+
+        //initializes camera position to zero
+        camera = Vector2.Zero; 
     }
 
+    //loads a csv map from tiled and returns a dictionary with the tile positions and tile ids
+    //an csv file is basically a file composed by numbers, the numbers symbolize the tile id, or, the tile used from the mmm png
+    //this dictionary will associate a vector2(position) to an int value(tile id)
     private Dictionary<Vector2, int> LoadMap(string filepath)
     {
+        //creates the dictionary to store the map 
         Dictionary<Vector2, int> result = new();
         StreamReader reader = new(filepath);
 
@@ -51,13 +58,16 @@ public class Game1 : Game
         string line;
         while ((line = reader.ReadLine()) != null)
         {
+            //reads the csv file and uses a comma as the delimiter for the tile id
             string[] items = line.Split(',');
             for (int x = 0; x < items.Length; x++)
             {
+                //parses string to int
                 if (int.TryParse(items[x], out int value))
                 {
                     if (value > -1)
                     {
+                        //add the tile position and id to the dictionary(tile position as key and id as value)
                         result[new Vector2(x, y)] = value;
                     }
                 }
@@ -69,6 +79,9 @@ public class Game1 : Game
 
     public bool Victory() //level switcher based on score
     {
+        //if score reaches 500 or more then the score is once again set to 0
+        //and the counter is increased by 1
+        //(condition in draw function makes it so it will only draw level 1 while the counter is 0 and so on)
         if (score >= 500)
         {
             counter++;
@@ -91,6 +104,7 @@ public class Game1 : Game
         //load the tileset png used to make the tileset on tiled
         textureDic = Content.Load<Texture2D>("mmm");
         collidortext = Content.Load<Texture2D>("collision");
+        //loads a font to use on the "score"
         font = Content.Load<SpriteFont>("File");
         playertext = Content.Load<Texture2D>("playertext");
 
@@ -150,12 +164,13 @@ public class Game1 : Game
         _spriteBatch.Begin();
 
         int num_tiles_per_row_png = 14; //number of tiles in a row in the texturedic png
-        int tilesize = 32;
+        int tilesize = 32; //size of tile
 
         if (counter == 0)
         {
-            foreach (var item in background)
+            foreach (var item in background) //for each tile in the background dictionary
             {
+                //caculates the destination rectangle aka where the tile will be drawn on the screen, based on the .key which is the x and y position in the dictionary
                 Rectangle drect = new(
                     (int)item.Key.X * display_tilesize + (int)camera.X, (int)item.Key.Y * display_tilesize + (int)camera.Y, display_tilesize, display_tilesize
                  );
@@ -163,11 +178,15 @@ public class Game1 : Game
                 int x = item.Value % num_tiles_per_row_png;
                 int y = item.Value / num_tiles_per_row_png;
 
+                //calculates the source rectangle position on the tileset atlas (tilesetDic) based on the tile id given by .value
                 Rectangle src = new(
                     x * tilesize, y * tilesize, tilesize, tilesize
                     );
+                //draws the actual tile on screen until ther are not more items in the choosen dictionary
                 _spriteBatch.Draw(textureDic, drect, src, Color.White);
             }
+
+            //every single foreach below follows the same rules as the one above
 
             foreach (var item in platforms)
             {
