@@ -19,5 +19,50 @@ namespace ShadowsOfThePast.Content.Entidades
 
 
         }
+
+        public bool AddEntity(GameEntity entity)
+        {
+            // Check if the entity is null
+            if (entity is null)
+            {
+                throw new ArgumentNullException(nameof(entity));
+            }
+
+            // Check if the entity is already on the list
+            if (HasEntity(entity))
+            {
+                return false;
+            }
+
+            // Add the entity to the list
+            toAdd.Add(entity);
+
+            return true;
+        }
+
+
+        public bool RemoveEntity(GameEntity entity)
+        {
+            // Check if the entity is null
+            if (entity is null)
+            {
+                throw new ArgumentNullException(nameof(entity));
+            }
+
+            // Check if the entity is already on the list
+            if (!HasEntity(entity))
+            {
+                return false;
+            }
+
+            // Add the entity to the list
+            toRemove.Add(entity);
+
+            return true;
+        }
+
+
+        // Checks if there are entities on the list's
+        public bool HasEntity(GameEntity entity) => entities.Contains(entity) || toAdd.Contains(entity) || toRemove.Contains(entity);
     }
 }

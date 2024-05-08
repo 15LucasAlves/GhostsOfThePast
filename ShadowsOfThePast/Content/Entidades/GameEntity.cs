@@ -19,5 +19,6 @@ namespace ShadowsOfThePast.Content.Entidades
         void Draw(SpriteBatch sprite, GameTime gameTime);
 
         void Update(GameTime gameTime);
+
     }
 }
