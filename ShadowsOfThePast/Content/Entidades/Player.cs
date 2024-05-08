@@ -9,6 +9,7 @@ namespace ShadowsOfThePast
 {
     public class Player
     {
+
         // Player constructor
         public Player()
         {
@@ -93,6 +94,5 @@ namespace ShadowsOfThePast
                 isAlive = false;
             }
         }
-
     }
 }
