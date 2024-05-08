@@ -27,6 +27,7 @@ public class Game1 : Game
     private int counter = 0;
     int score = 0;
     int display_tilesize = 32;
+    
 
     public Game1()
     {
@@ -105,11 +106,8 @@ public class Game1 : Game
         collidortext = Content.Load<Texture2D>("collision");
         //loads a font to use on the "score"
         font = Content.Load<SpriteFont>("File");
-        playertext = Content.Load<Texture2D>("playertext");
 
-        Texture2D texture = Content.Load<Texture2D>("playertext");
-        player = new Player(texture, 2, 4);
-        // TODO: use this.Content to load your game content here
+        player.Load();
     }
 
     protected override void Update(GameTime gameTime)

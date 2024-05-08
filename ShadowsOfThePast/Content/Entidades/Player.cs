@@ -3,7 +3,9 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Reflection.Metadata;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -19,18 +21,13 @@ namespace ShadowsOfThePast
         // We need to know if the player is alive or not so we can end the game
         public bool isAlive;
 
-        // Player sprite and position
-        public Texture2D Texture { get; set; }
-        public int Rows { get; set; }
-        public int Columns { get; set; }
-
         // Animation variables
-        private int currentFrame;
-        private int totalFrames;
-
-        // Slow down frame animation
-        private int timeSinceLastFrame = 0;
-        private int millisecondsPerFrame = 400;
+        public int animationCounter;
+        public int activeFrame;
+        Texture2D animationSprite;
+        public Texture2D[] idle;
+        public Texture2D[] walkR;
+        public Texture2D[] jumpR;
 
         // Player constructor
         public Player(Texture2D texture, int rows, int columns)
@@ -38,66 +35,81 @@ namespace ShadowsOfThePast
             healthPoints = 3;
             manaPoints = 10;
             isAlive = true;
+        }
 
-            Texture = texture;
-            Rows = rows;
-            Columns = columns;
-            currentFrame = 0;
-            totalFrames = Rows * Columns;
+
+        // Load the player's animations
+        public void Load() 
+        {
+            // Loads the players animations
+            idle = new Texture2D[2];
+            idle[0] = content.Load<Texture2D>("Idle0");
+            idle[1] = Content.Load<Texture2D>("Idle1");
+
+            walkR = new Texture2D[4];
+            walkR[0] = Content.Load<Texture2D>("WalksideR0");
+            walkR[1] = Content.Load<Texture2D>("WalksideR1");
+            walkR[2] = Content.Load<Texture2D>("WalksideR2");
+            walkR[3] = Content.Load<Texture2D>("WalksideR3");
+
+            jumpR = new Texture2D[4];
+            jumpR[0] = Content.Load<Texture2D>("jumpR0");
+            jumpR[1] = Content.Load<Texture2D>("jumpR1");
+            jumpR[2] = Content.Load<Texture2D>("jumpR2");
+            jumpR[3] = Content.Load<Texture2D>("jumpR3");
         }
 
 
         // To update the player's
         public void Update(GameTime gameTime)
         {
-            timeSinceLastFrame += gameTime.ElapsedGameTime.Milliseconds;
-            if (timeSinceLastFrame > millisecondsPerFrame)
+            KeyboardState keystate = Keyboard.GetState();
+            animationCounter++;
+
+            // Idle animation
+            if (keystate.GetPressedKeys().Length == 0)
             {
-                timeSinceLastFrame -= millisecondsPerFrame;
+                animationSprite = idle[activeFrame];
 
-                KeyboardState keystate = Keyboard.GetState();
+                activeFrame++;
 
-                // Idle animation
-                if (keystate.GetPressedKeys().Length == 0)
-                    currentFrame++;
-                timeSinceLastFrame = 0;
-                if (currentFrame == 2)
-                    currentFrame = 0;
-
-                // Walking Left Animation
-                if (keystate.IsKeyDown(Keys.D))
+                if (activeFrame >= 2)
                 {
-
-                }
-
-                // Walking Right Animation
-                if (keystate.IsKeyDown(Keys.A))
-                {
-
-                }
-
-                // Jumping Animation
-                if (keystate.IsKeyDown(Keys.W))
-                {
-
+                    activeFrame = 0;
                 }
             }
+
+            // Walking Left Animation
+            if (keystate.IsKeyDown(Keys.D))
+            {
+
+            }
+
+            // Walking Right Animation
+            if (keystate.IsKeyDown(Keys.A))
+            {
+
+            }
+
+            // Jumping Animation
+            if (keystate.IsKeyDown(Keys.W))
+            {
+
+            }
         }
+
 
         // To draw the player
         public void Draw(SpriteBatch spriteBatch, Vector2 location, Color color)
         {
             int width = 64;
-            int height = 64;
-            int row = (int)((float)currentFrame / Columns);
-            int column = currentFrame % Columns;
+            int height = 64;           
 
-            Rectangle sourceRectangle = new Rectangle(width * column, height * row, width, height);
+            Rectangle sourceRectangle = new Rectangle(width, height, width, height);
             Rectangle destinationRectangle = new Rectangle((int)location.X, (int)location.Y, width, height);
 
-            spriteBatch.Draw(Texture, destinationRectangle, sourceRectangle, color);
+            spriteBatch.Draw(animationSprite, destinationRectangle, sourceRectangle, color);
         }
-
 
 
         // Player fire spell method
