@@ -57,18 +57,18 @@ namespace ShadowsOfThePast
             walkR = new Texture2D[4];
             jumpR = new Texture2D[4];
 
-            idle[0] = _content.Load<Texture2D>("Animation/Idle0");
-            idle[1] = _content.Load<Texture2D>("Animation/Idle1");
+            idle[0] = _content.Load<Texture2D>("Idle0");
+            idle[1] = _content.Load<Texture2D>("Idle1");
 
-            walkR[0] = _content.Load<Texture2D>("Animation/WalksideR0");
-            walkR[1] = _content.Load<Texture2D>("Animation/WalksideR1");
-            walkR[2] = _content.Load<Texture2D>("Animation/WalksideR2");
-            walkR[3] = _content.Load<Texture2D>("Animation/WalksideR3");
+            walkR[0] = _content.Load<Texture2D>("WalksideR0");
+            walkR[1] = _content.Load<Texture2D>("WalksideR1");
+            walkR[2] = _content.Load<Texture2D>("WalksideR2");
+            walkR[3] = _content.Load<Texture2D>("WalksideR3");
 
-            jumpR[0] = _content.Load<Texture2D>("Animation/jumpR0");
-            jumpR[1] = _content.Load<Texture2D>("Animation/jumpR1");
-            jumpR[2] = _content.Load<Texture2D>("Animation/jumpR2");
-            jumpR[3] = _content.Load<Texture2D>("Animation/jumpR3");
+            jumpR[0] = _content.Load<Texture2D>("jumpR0");
+            jumpR[1] = _content.Load<Texture2D>("jumpR1");
+            jumpR[2] = _content.Load<Texture2D>("jumpR2");
+            jumpR[3] = _content.Load<Texture2D>("jumpR3");
         }   
 
 
