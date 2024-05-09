@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System;
@@ -13,6 +14,14 @@ namespace ShadowsOfThePast
 {
     public class Player
     {
+        // Depndencies from monogame
+        private Game1 _game;
+        private GraphicsDeviceManager _graphics;
+        private GraphicsDevice _graphicsDevice;
+        private SpriteBatch _spriteBatch;
+        private ContentManager _content;
+
+
         // HP and MP meter so we know how much hits can the player take and how much spells can he cast
         public int healthPoints;
         public int manaPoints;
@@ -25,10 +34,13 @@ namespace ShadowsOfThePast
         public int animationCounter;
         public int activeFrame;
         Texture2D animationSprite;
+        public Texture2D[] idle;
+        public Texture2D[] walkR;
+        public Texture2D[] jumpR;
 
 
         // Player constructor
-        public Player(Texture2D texture, int rows, int columns)
+        public Player(Game1 game, GraphicsDevice graphicsDevice, SpriteBatch spriteBatch, ContentManager content)
         {
             healthPoints = 3;
             manaPoints = 10;
@@ -36,8 +48,32 @@ namespace ShadowsOfThePast
         }
 
 
+        public void LoadContent(ContentManager content, SpriteBatch spriteBatch)
+        {
+            _content = content;
+
+            // Load the player's sprites
+            idle = new Texture2D[2];
+            walkR = new Texture2D[4];
+            jumpR = new Texture2D[4];
+
+            idle[0] = _content.Load<Texture2D>("Animation/Idle0");
+            idle[1] = _content.Load<Texture2D>("Animation/Idle1");
+
+            walkR[0] = _content.Load<Texture2D>("Animation/WalksideR0");
+            walkR[1] = _content.Load<Texture2D>("Animation/WalksideR1");
+            walkR[2] = _content.Load<Texture2D>("Animation/WalksideR2");
+            walkR[3] = _content.Load<Texture2D>("Animation/WalksideR3");
+
+            jumpR[0] = _content.Load<Texture2D>("Animation/jumpR0");
+            jumpR[1] = _content.Load<Texture2D>("Animation/jumpR1");
+            jumpR[2] = _content.Load<Texture2D>("Animation/jumpR2");
+            jumpR[3] = _content.Load<Texture2D>("Animation/jumpR3");
+        }   
+
+
         // To update the player's
-        public void Update(GameTime gameTime)
+        public void Update(GameTime gameTime, GraphicsDevice graphicsDevice)
         {
             KeyboardState keystate = Keyboard.GetState();
             animationCounter++;
@@ -62,7 +98,7 @@ namespace ShadowsOfThePast
                 // Walking Left Animation
                 if (keystate.IsKeyDown(Keys.D))
                 {
-                    // Reset the animation (only has 2 frames so reset every 2 frames)
+                    // Reset the animation (only has 4 frames so reset every 4 frames)
                     if (activeFrame >= 4)
                     {
                         activeFrame = 0;
@@ -72,7 +108,7 @@ namespace ShadowsOfThePast
 
                     activeFrame++;
                 }
-            }
+            
 
                 // Walking Right Animation
                 if (keystate.IsKeyDown(Keys.A))
@@ -83,24 +119,31 @@ namespace ShadowsOfThePast
                 // Jumping Right Animation
                 if (keystate.IsKeyDown(Keys.W) || keystate.IsKeyDown(Keys.D))
                 {
-                    // Reset the animation (only has 2 frames so reset every 2 frames)
+                    // Reset the animation (only has 4 frames so reset every 4 frames)
                     if (activeFrame >= 4)
                     {
                         activeFrame = 0;
                     }
 
                     animationSprite = jumpR[activeFrame];
-
+                    
                     activeFrame++;
+                }
+
+                // Jumping Left Animation
+                if (keystate.IsKeyDown(Keys.W) || keystate.IsKeyDown(Keys.A))
+                {
+
                 }
 
                 animationCounter = 0;
             }
         }
+    
 
 
         // To draw the player
-        public void Draw(SpriteBatch spriteBatch, Vector2 location, Color color)
+        public void Draw(SpriteBatch spriteBatch, Vector2 location, Color color, GameTime gameTime)
         {
             int width = 64;
             int height = 64;           

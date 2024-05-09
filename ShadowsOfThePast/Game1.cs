@@ -11,6 +11,7 @@ public class Game1 : Game
 {
     private GraphicsDeviceManager _graphics;
     private SpriteBatch _spriteBatch;
+    private GraphicsDevice graphicsDevice;
 
     private Dictionary<Vector2, int> background;
     private Dictionary<Vector2, int> platforms;
@@ -19,7 +20,6 @@ public class Game1 : Game
     private Dictionary<Vector2, int> collisions;
     private Texture2D textureDic;
     private Texture2D collidortext;
-    private Texture2D playertext;
     private Vector2 camera;
     private Player player;
     private SpriteFont font;
@@ -27,7 +27,7 @@ public class Game1 : Game
     private int counter = 0;
     int score = 0;
     int display_tilesize = 32;
-    
+
 
     public Game1()
     {
@@ -94,6 +94,7 @@ public class Game1 : Game
     protected override void Initialize()
     {
         // TODO: Add your initialization logic here
+        player = new Player(this, GraphicsDevice, _spriteBatch, Content);
 
         base.Initialize();
     }
@@ -107,7 +108,9 @@ public class Game1 : Game
         //loads a font to use on the "score"
         font = Content.Load<SpriteFont>("File");
 
-        player.Load();
+ 
+        // Loads the players animations
+        player.LoadContent(Content, _spriteBatch);
     }
 
     protected override void Update(GameTime gameTime)
@@ -133,7 +136,7 @@ public class Game1 : Game
             camera.Y += 5;
         }
 
-        player.Update(gameTime);
+        player.Update(gameTime, graphicsDevice);
 
         /*
         int tileWidth = 32;
@@ -240,7 +243,7 @@ public class Game1 : Game
                 _spriteBatch.Draw(textureDic, drect, src, Color.White);
             }
 
-            player.Draw(_spriteBatch, new Vector2(200, 200), Color.White);
+            player.Draw(_spriteBatch, new Vector2(200, 200), Color.White, gameTime);
 
         }
         else
