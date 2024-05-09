@@ -25,9 +25,7 @@ namespace ShadowsOfThePast
         public int animationCounter;
         public int activeFrame;
         Texture2D animationSprite;
-        public Texture2D[] idle;
-        public Texture2D[] walkR;
-        public Texture2D[] jumpR;
+
 
         // Player constructor
         public Player(Texture2D texture, int rows, int columns)
@@ -38,63 +36,65 @@ namespace ShadowsOfThePast
         }
 
 
-        // Load the player's animations
-        public void Load() 
-        {
-            // Loads the players animations
-            idle = new Texture2D[2];
-            idle[0] = content.Load<Texture2D>("Idle0");
-            idle[1] = Content.Load<Texture2D>("Idle1");
-
-            walkR = new Texture2D[4];
-            walkR[0] = Content.Load<Texture2D>("WalksideR0");
-            walkR[1] = Content.Load<Texture2D>("WalksideR1");
-            walkR[2] = Content.Load<Texture2D>("WalksideR2");
-            walkR[3] = Content.Load<Texture2D>("WalksideR3");
-
-            jumpR = new Texture2D[4];
-            jumpR[0] = Content.Load<Texture2D>("jumpR0");
-            jumpR[1] = Content.Load<Texture2D>("jumpR1");
-            jumpR[2] = Content.Load<Texture2D>("jumpR2");
-            jumpR[3] = Content.Load<Texture2D>("jumpR3");
-        }
-
-
         // To update the player's
         public void Update(GameTime gameTime)
         {
             KeyboardState keystate = Keyboard.GetState();
             animationCounter++;
 
-            // Idle animation
-            if (keystate.GetPressedKeys().Length == 0)
+            // Limit the animation speed
+            if (animationCounter == 30)
             {
-                animationSprite = idle[activeFrame];
-
-                activeFrame++;
-
-                if (activeFrame >= 2)
+                // Idle animation
+                if (keystate.GetPressedKeys().Length == 0)
                 {
-                    activeFrame = 0;
+                    // Reset the animation (only has 2 frames so reset every 2 frames)
+                    if (activeFrame >= 2)
+                    {
+                        activeFrame = 0;
+                    }
+
+                    animationSprite = idle[activeFrame];
+
+                    activeFrame++;
+                }
+
+                // Walking Left Animation
+                if (keystate.IsKeyDown(Keys.D))
+                {
+                    // Reset the animation (only has 2 frames so reset every 2 frames)
+                    if (activeFrame >= 4)
+                    {
+                        activeFrame = 0;
+                    }
+
+                    animationSprite = walkR[activeFrame];
+
+                    activeFrame++;
                 }
             }
 
-            // Walking Left Animation
-            if (keystate.IsKeyDown(Keys.D))
-            {
+                // Walking Right Animation
+                if (keystate.IsKeyDown(Keys.A))
+                {
 
-            }
+                }
 
-            // Walking Right Animation
-            if (keystate.IsKeyDown(Keys.A))
-            {
+                // Jumping Right Animation
+                if (keystate.IsKeyDown(Keys.W) || keystate.IsKeyDown(Keys.D))
+                {
+                    // Reset the animation (only has 2 frames so reset every 2 frames)
+                    if (activeFrame >= 4)
+                    {
+                        activeFrame = 0;
+                    }
 
-            }
+                    animationSprite = jumpR[activeFrame];
 
-            // Jumping Animation
-            if (keystate.IsKeyDown(Keys.W))
-            {
+                    activeFrame++;
+                }
 
+                animationCounter = 0;
             }
         }
 
