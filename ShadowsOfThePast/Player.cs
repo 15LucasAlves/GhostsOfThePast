@@ -21,6 +21,7 @@ namespace ShadowsOfThePast
         private SpriteBatch _spriteBatch;
         private ContentManager _content;
 
+        public Vector2 location { get; set; }
 
         // HP and MP meter so we know how much hits can the player take and how much spells can he cast
         public int healthPoints;
@@ -36,7 +37,9 @@ namespace ShadowsOfThePast
         Texture2D animationSprite;
         public Texture2D[] idle;
         public Texture2D[] walkR;
+        public Texture2D[] walkL;
         public Texture2D[] jumpR;
+        public Texture2D[] jumpL;
 
 
         // Player constructor
@@ -45,6 +48,7 @@ namespace ShadowsOfThePast
             healthPoints = 3;
             manaPoints = 10;
             isAlive = true;
+            location = new Vector2(0, 255);
         }
 
 
@@ -55,21 +59,44 @@ namespace ShadowsOfThePast
             // Load the player's sprites
             idle = new Texture2D[2];
             walkR = new Texture2D[4];
+            walkL = new Texture2D[4];
             jumpR = new Texture2D[4];
+            jumpL = new Texture2D[4];
 
             idle[0] = _content.Load<Texture2D>("Idle0");
             idle[1] = _content.Load<Texture2D>("Idle1");
+
+            if (idle[0] == null)
+            {
+                System.Diagnostics.Debug.WriteLine("Failed to load textureDic.");
+            }
+            else
+            {
+                System.Diagnostics.Debug.WriteLine("Successfully loaded textureDic.");
+            }
 
             walkR[0] = _content.Load<Texture2D>("WalksideR0");
             walkR[1] = _content.Load<Texture2D>("WalksideR1");
             walkR[2] = _content.Load<Texture2D>("WalksideR2");
             walkR[3] = _content.Load<Texture2D>("WalksideR3");
 
+            walkL[0] = _content.Load<Texture2D>("WalksideL0");
+            walkL[1] = _content.Load<Texture2D>("WalksideL1");
+            walkL[2] = _content.Load<Texture2D>("WalksideL2");
+            walkL[3] = _content.Load<Texture2D>("WalksideL3");
+
             jumpR[0] = _content.Load<Texture2D>("jumpR0");
             jumpR[1] = _content.Load<Texture2D>("jumpR1");
             jumpR[2] = _content.Load<Texture2D>("jumpR2");
             jumpR[3] = _content.Load<Texture2D>("jumpR3");
-        }   
+
+            jumpL[0] = _content.Load<Texture2D>("jumpL0");
+            jumpL[1] = _content.Load<Texture2D>("jumpL1");
+            jumpL[2] = _content.Load<Texture2D>("jumpL2");
+            jumpL[3] = _content.Load<Texture2D>("jumpL3");
+
+            animationSprite = idle[0];
+        }
 
 
         // To update the player's
@@ -77,9 +104,10 @@ namespace ShadowsOfThePast
         {
             KeyboardState keystate = Keyboard.GetState();
             animationCounter++;
+            Vector2 playerposition = location;
 
             // Limit the animation speed
-            if (animationCounter == 30)
+            if (animationCounter == 15)
             {
                 // Idle animation
                 if (keystate.GetPressedKeys().Length == 0)
@@ -94,9 +122,9 @@ namespace ShadowsOfThePast
 
                     activeFrame++;
                 }
-
+                
                 // Walking Left Animation
-                if (keystate.IsKeyDown(Keys.D))
+                if (keystate.IsKeyDown(Keys.Left))
                 {
                     // Reset the animation (only has 4 frames so reset every 4 frames)
                     if (activeFrame >= 4)
@@ -104,20 +132,29 @@ namespace ShadowsOfThePast
                         activeFrame = 0;
                     }
 
-                    animationSprite = walkR[activeFrame];
+                    animationSprite = walkL[activeFrame];
+                    location = new Vector2(location.X - 5, location.Y);
 
                     activeFrame++;
                 }
-            
+
 
                 // Walking Right Animation
-                if (keystate.IsKeyDown(Keys.A))
+                if (keystate.IsKeyDown(Keys.Right))
                 {
+                    if (activeFrame >= 4)
+                    {
+                        activeFrame = 0;
+                    }
 
+                    animationSprite = walkR[activeFrame];
+                    location = new Vector2(location.X + 5, location.Y);
+
+                    activeFrame++;
                 }
 
                 // Jumping Right Animation
-                if (keystate.IsKeyDown(Keys.W) || keystate.IsKeyDown(Keys.D))
+                if (keystate.IsKeyDown(Keys.Space) && keystate.IsKeyDown(Keys.Right))
                 {
                     // Reset the animation (only has 4 frames so reset every 4 frames)
                     if (activeFrame >= 4)
@@ -126,32 +163,39 @@ namespace ShadowsOfThePast
                     }
 
                     animationSprite = jumpR[activeFrame];
-                    
+
                     activeFrame++;
                 }
 
                 // Jumping Left Animation
-                if (keystate.IsKeyDown(Keys.W) || keystate.IsKeyDown(Keys.A))
+                if (keystate.IsKeyDown(Keys.Space) && keystate.IsKeyDown(Keys.Left))
                 {
+                    if (activeFrame >= 4)
+                    {
+                        activeFrame = 0;
+                    }
 
+                    animationSprite = jumpL[activeFrame];
+
+                    activeFrame++;
                 }
 
                 animationCounter = 0;
             }
         }
-    
 
 
         // To draw the player
-        public void Draw(SpriteBatch spriteBatch, Vector2 location, Color color, GameTime gameTime)
+        public void Draw(SpriteBatch spriteBatch, Color color, GameTime gameTime)
         {
             int width = 64;
-            int height = 64;           
+            int height = 64;
 
-            Rectangle sourceRectangle = new Rectangle(width, height, width, height);
-            Rectangle destinationRectangle = new Rectangle((int)location.X, (int)location.Y, width, height);
+            //Rectangle sourceRectangle = new Rectangle(width, height, width, height);
+            //Rectangle destinationRectangle = new Rectangle((int)location.X, (int)location.Y, width, height);
 
-            spriteBatch.Draw(animationSprite, destinationRectangle, sourceRectangle, color);
+            //spriteBatch.Draw(animationSprite, destinationRectangle, sourceRectangle, color);
+            spriteBatch.Draw(animationSprite,location, color);
         }
 
 
@@ -162,19 +206,6 @@ namespace ShadowsOfThePast
             if (Keyboard.GetState().IsKeyDown(Keys.Space))
             {
                 // Fire the spell
-
-
-            }
-        }
-
-
-        // Player swap spell method
-        public void SwapSpell()
-        {
-            // Check if the player should swap spell
-            if (Keyboard.GetState().IsKeyDown(Keys.LeftShift))
-            {
-                // Swap the spell
 
 
             }
