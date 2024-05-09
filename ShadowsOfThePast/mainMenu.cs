@@ -15,14 +15,17 @@ namespace ShadowsOfThePast
         {
 
         }
+
         public void LoadContent(ContentManager Content, SpriteBatch spriteBatch)
         {
 
         }
+
         public void Update(GameTime gameTime, GraphicsDevice graphicsDevice)
         {
 
         }
+
         public void Draw(GameTime gameTime, SpriteBatch spriteBatch)
         {
 

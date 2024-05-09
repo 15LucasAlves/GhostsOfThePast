@@ -158,7 +158,7 @@ namespace ShadowsOfThePast
                 player.Velocity.Y += gravity * gameTime.ElapsedGameTime.TotalSeconds;
             }
             */
-            // TODO: Add your update logic here
+
             player.Update(gameTime, graphicsDevice);
         }
 
@@ -236,6 +236,7 @@ namespace ShadowsOfThePast
             {
                 //add another level
             }
+
             player.Draw(spriteBatch, Color.White, gameTime);
             _spriteBatch.DrawString(font, "Score:", new Vector2(5, 0), Color.Black);
 
