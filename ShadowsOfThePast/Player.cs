@@ -155,7 +155,7 @@ namespace ShadowsOfThePast
 
 
                 // Walking Left Animation
-                if (keystate.IsKeyDown(Keys.Left))
+                if (keystate.IsKeyDown(Keys.Left) && keystate.IsKeyUp(Keys.Space))
                 {
                     // Reset the animation (only has 4 frames so reset every 4 frames)
                     if (activeFrame >= 4)
@@ -171,7 +171,7 @@ namespace ShadowsOfThePast
 
 
                 // Walking Right Animation
-                if (keystate.IsKeyDown(Keys.Right))
+                if (keystate.IsKeyDown(Keys.Right) && keystate.IsKeyUp(Keys.Space))
                 {
                     if (activeFrame >= 4)
                     {
