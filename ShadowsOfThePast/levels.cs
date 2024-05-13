@@ -128,7 +128,10 @@ namespace ShadowsOfThePast
             {
                 camera.Y -= 5;
             }
-            
+            else if (Keyboard.GetState().IsKeyDown(Keys.Up))
+            {
+                camera.Y += 5;
+            }
 
             /*foreach(var item in collisions)
             {
