@@ -19,7 +19,9 @@ namespace ShadowsOfThePast
         private SpriteBatch _spriteBatch;
         private ContentManager _content;
 
+        // Player and Camera variables
         Player player;
+        public Camera camera;
 
         public Dictionary<Vector2, int> background;
         public Dictionary<Vector2, int> platforms;
@@ -29,13 +31,14 @@ namespace ShadowsOfThePast
         public Texture2D textureDic;
         public Texture2D collidortext;
         public Texture2D playertext;
-        private Vector2 camera;
         private SpriteFont font;
-        const float gravity = 9.8f;
         private int counter = 0;
         int score = 0;
         int display_tilesize = 32;
 
+        // Gravity and colision variables
+        const float gravity = 9.8f;
+ 
         public levels(Game1 game, GraphicsDevice graphicsDevice, SpriteBatch spriteBatch, ContentManager content)
 		{
             _game = game;
@@ -49,7 +52,7 @@ namespace ShadowsOfThePast
             props = LoadMap("../../Data/level1_props.csv");
             house = LoadMap("../../Data/level1_house.csv");
             collisions = LoadMap("../../Data/level1_collisions.csv");
-            camera = Vector2.Zero;
+            camera = new Camera(Vector2.Zero);
         }
 
         private Dictionary<Vector2, int> LoadMap(string filepath)
@@ -115,24 +118,6 @@ namespace ShadowsOfThePast
 
         public void Update(GameTime gameTime, GraphicsDevice graphicsDevice)
         {
-            //simple camera to look over the level, later we should make it track the player instead
-            if (Keyboard.GetState().IsKeyDown(Keys.Right))
-            {
-                camera.X = Math.Min(camera.X - 5, _graphicsDevice.Viewport.Width);
-            }
-            else if (Keyboard.GetState().IsKeyDown(Keys.Left))
-            {
-                camera.X = Math.Min(camera.X + 5, 0);
-            }
-            else if (Keyboard.GetState().IsKeyDown(Keys.Down))
-            {
-                camera.Y -= 5;
-            }
-            else if (Keyboard.GetState().IsKeyDown(Keys.Up))
-            {
-                camera.Y += 5;
-            }
-
             /*foreach(var item in collisions)
             {
                 if(player.location.X(int)item.Key.X)
@@ -163,6 +148,8 @@ namespace ShadowsOfThePast
             */
 
             player.Update(gameTime, graphicsDevice);
+
+            camera.followPlayer(player.location );
         }
 
         public void Draw(GameTime gameTime, SpriteBatch spriteBatch)
@@ -178,7 +165,7 @@ namespace ShadowsOfThePast
                 foreach (var item in background)
                 {
                     Rectangle drect = new(
-                        (int)item.Key.X * display_tilesize + (int)camera.X, (int)item.Key.Y * display_tilesize + (int)camera.Y, display_tilesize, display_tilesize
+                        (int)item.Key.X * display_tilesize + camera.position.X, (int)item.Key.Y * display_tilesize + camera.position.Y, display_tilesize, display_tilesize
                      );
 
                     int x = item.Value % num_tiles_per_row_png;
@@ -193,7 +180,7 @@ namespace ShadowsOfThePast
                 foreach (var item in platforms)
                 {
                     Rectangle drect = new(
-                        (int)item.Key.X * display_tilesize + (int)camera.X, (int)item.Key.Y * display_tilesize + (int)camera.Y, display_tilesize, display_tilesize
+                        (int)item.Key.X * display_tilesize + camera.position.X, (int)item.Key.Y * display_tilesize + (int)camera.Y, display_tilesize, display_tilesize
                      );
 
                     int x = item.Value % num_tiles_per_row_png;
@@ -208,7 +195,7 @@ namespace ShadowsOfThePast
                 foreach (var item in props)
                 {
                     Rectangle drect = new(
-                        (int)item.Key.X * display_tilesize + (int)camera.X, (int)item.Key.Y * display_tilesize + (int)camera.Y, display_tilesize, display_tilesize
+                        (int)item.Key.X * display_tilesize + camera.position.X, (int)item.Key.Y * display_tilesize + (int)camera.Y, display_tilesize, display_tilesize
                      );
 
                     int x = item.Value % num_tiles_per_row_png;
@@ -223,7 +210,7 @@ namespace ShadowsOfThePast
                 foreach (var item in house)
                 {
                     Rectangle drect = new(
-                        (int)item.Key.X * display_tilesize + (int)camera.X, (int)item.Key.Y * display_tilesize + (int)camera.Y, display_tilesize, display_tilesize
+                        (int)item.Key.X * display_tilesize + camera.position.X, (int)item.Key.Y * display_tilesize + (int)camera.Y, display_tilesize, display_tilesize
                      );
                     //value is the tile index in the tileset
                     int x = item.Value % num_tiles_per_row_png;

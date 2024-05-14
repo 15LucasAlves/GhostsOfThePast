@@ -22,6 +22,7 @@ namespace ShadowsOfThePast
         private ContentManager _content;
 
         public Vector2 location { get; set; }
+        public Rectangle playerRectangle;
 
         // HP and MP meter so we know how much hits can the player take and how much spells can he cast
         public int healthPoints;
@@ -34,7 +35,6 @@ namespace ShadowsOfThePast
         // Animation variables
         public int animationCounter;
         public int activeFrame;
-        public int animationFinish;
         Texture2D animationSprite;
         public Texture2D[] idle;
         public Texture2D[] walkR;
@@ -50,6 +50,7 @@ namespace ShadowsOfThePast
             manaPoints = 10;
             isAlive = true;
             location = new Vector2(0, 255);
+            playerRectangle = new Rectangle((int)location.X,(int)location.Y,64,64);
         }
 
 
@@ -165,6 +166,7 @@ namespace ShadowsOfThePast
 
                     animationSprite = walkL[activeFrame];
                     location = new Vector2(location.X - 5, location.Y);
+                    playerRectangle.X = (int)location.X;
 
                     activeFrame++;
                 }
@@ -180,6 +182,7 @@ namespace ShadowsOfThePast
 
                     animationSprite = walkR[activeFrame];
                     location = new Vector2(location.X + 5, location.Y);
+                    playerRectangle.X = (int)location.X;
 
                     activeFrame++;
                 }
