@@ -21,8 +21,8 @@ namespace ShadowsOfThePast
         private SpriteBatch _spriteBatch;
         private ContentManager _content;
 
-        public Vector2 location { get; set; }
         public Rectangle playerRectangle;
+        public Vector2 velocity;
 
         // HP and MP meter so we know how much hits can the player take and how much spells can he cast
         public int healthPoints;
@@ -49,8 +49,8 @@ namespace ShadowsOfThePast
             healthPoints = 3;
             manaPoints = 10;
             isAlive = true;
-            location = new Vector2(0, 255);
-            playerRectangle = new Rectangle((int)location.X,(int)location.Y,64,64);
+            playerRectangle = new Rectangle(0, 0, 64, 64);
+            velocity = new();
         }
 
 
@@ -106,7 +106,9 @@ namespace ShadowsOfThePast
         {
             KeyboardState keystate = Keyboard.GetState();
             animationCounter++;
-            Vector2 playerposition = location;
+         
+            velocity = Vector2.Zero;
+            velocity.Y = 5.0f;
 
             // Limit the animation speed
             if (animationCounter == 15)
@@ -165,8 +167,7 @@ namespace ShadowsOfThePast
                     }
 
                     animationSprite = walkL[activeFrame];
-                    location = new Vector2(location.X - 5, location.Y);
-                    playerRectangle.X = (int)location.X;
+                    velocity.X = -5;
 
                     activeFrame++;
                 }
@@ -181,13 +182,11 @@ namespace ShadowsOfThePast
                     }
 
                     animationSprite = walkR[activeFrame];
-                    location = new Vector2(location.X + 5, location.Y);
-                    playerRectangle.X = (int)location.X;
+                    velocity.X = 5;
 
                     activeFrame++;
                 }
 
-               
 
                 animationCounter = 0;
             }
@@ -197,7 +196,16 @@ namespace ShadowsOfThePast
         // To draw the player
         public void Draw(SpriteBatch spriteBatch, Color color, GameTime gameTime)
         {
-            spriteBatch.Draw(animationSprite,location, color);
+            Texture2D pixel = new Texture2D(spriteBatch.GraphicsDevice, 1, 1);
+            pixel.SetData(new[] { Color.Red });
+
+            spriteBatch.Draw(pixel, new Rectangle(playerRectangle.Left, playerRectangle.Top, playerRectangle.Width, 1), color);
+            spriteBatch.Draw(pixel, new Rectangle(playerRectangle.Left, playerRectangle.Bottom, playerRectangle.Width, 1), color);
+            spriteBatch.Draw(pixel, new Rectangle(playerRectangle.Left, playerRectangle.Top, 1, playerRectangle.Height), color);
+            spriteBatch.Draw(pixel, new Rectangle(playerRectangle.Right, playerRectangle.Top, 1, playerRectangle.Height), color);
+
+            spriteBatch.Draw(animationSprite, playerRectangle, color);
+
         }
 
 

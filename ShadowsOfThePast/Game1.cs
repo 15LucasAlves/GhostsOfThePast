@@ -29,6 +29,7 @@ public class Game1 : Game
 
     protected override void Initialize()
     {
+        // TODO: Add your initialization logic here
         _stateManager = new StateManager();
         _stateManager.ChangeState(new levels(this, GraphicsDevice, _spriteBatch, Content));
         _mainMenu = new mainMenu(this, GraphicsDevice, _spriteBatch, Content);
@@ -45,13 +46,14 @@ public class Game1 : Game
     {
         _spriteBatch = new SpriteBatch(GraphicsDevice);
         _stateManager.LoadContent(Content, _spriteBatch);
+        // TODO: use this.Content to load your game content here
     }
 
     protected override void Update(GameTime gameTime)
     {
         if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
             Exit();
-
+        // TODO: Add your update logic here
         if (_stateManager.CurrentState == _mainMenu && Keyboard.GetState().IsKeyDown(Keys.Enter))
         {
             _stateManager.ChangeState(_levels);
@@ -66,7 +68,7 @@ public class Game1 : Game
     {
         GraphicsDevice.Clear(Color.CornflowerBlue);
 
-
+        // TODO: Add your drawing code here
         _stateManager.Draw(gameTime, _spriteBatch);
 
         base.Draw(gameTime);

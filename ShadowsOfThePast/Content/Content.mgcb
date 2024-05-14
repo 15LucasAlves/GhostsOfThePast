@@ -152,7 +152,7 @@
 /processorParam:TextureFormat=Color
 /build:jumpR3.PNG
 
-#begin mmm.png
+#begin map.png
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -162,7 +162,7 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:mmm.png
+/build:map.png
 
 #begin WalksideL0.png
 /importer:TextureImporter

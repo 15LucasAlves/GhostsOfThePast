@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace ShadowsOfThePast
 {
-    internal class Camera
+    public class Camera
     {
         public Vector2 position;
 
