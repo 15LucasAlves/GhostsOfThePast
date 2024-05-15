@@ -191,7 +191,7 @@ namespace ShadowsOfThePast
             }
 
             Rectangle target = player.playerRectangle;
-            camera.followPlayer(player.playerRectangle, new Vector2(_graphics.PreferredBackBufferWidth, _graphics.PreferredBackBufferHeight));
+            //camera.followPlayer(player.playerRectangle, new Vector2(_graphics.PreferredBackBufferWidth, _graphics.PreferredBackBufferHeight));
 
         }
 
