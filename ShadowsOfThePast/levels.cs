@@ -5,6 +5,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System.IO;
 using ShadowsOfThePast.Interface;
+using Microsoft.Xna.Framework.Media;
 using Microsoft.Xna.Framework.Content;
 using System.Reflection.Metadata;
 
@@ -21,17 +22,21 @@ namespace ShadowsOfThePast
 
         // Player and Camera variables
         Player player;
+        mainMenu MainMenu;
 
-        private Camera camera;
+        private Vector2 camera;
         public Dictionary<Vector2, int> background;
         public Dictionary<Vector2, int> platforms;
         public Dictionary<Vector2, int> props;
         public Dictionary<Vector2, int> house;
         public Dictionary<Vector2, int> collisions;
+
         public Texture2D textureDic;
         public Texture2D collidortext;
         public Texture2D playertext;
         private SpriteFont font;
+        public Song song;
+
         private int counter = 0;
         int score = 0;
         int display_tilesize = 64;
@@ -51,7 +56,8 @@ namespace ShadowsOfThePast
             _spriteBatch = spriteBatch;
             _content = content;
             player = new Player(_game, _graphicsDevice, _spriteBatch, _content);
-            camera = new Camera(Vector2.Zero);
+            MainMenu = new mainMenu(_game, _graphicsDevice, _spriteBatch, _content);
+            camera = Vector2.Zero;
 
             background = LoadMap("../../Data/level1_background.csv");
             platforms = LoadMap("../../Data/level1_platforms.csv");
@@ -119,7 +125,12 @@ namespace ShadowsOfThePast
             collidortext = _content.Load<Texture2D>("collision");
             
             font = _content.Load<SpriteFont>("File");
+
+            song = _content.Load<Song>("audio/lost_and_notfound");
+
+            MediaPlayer.Play(song);
         }
+
 
         public void Update(GameTime gameTime, GraphicsDevice graphicsDevice, GraphicsDeviceManager _graphics)
         {
@@ -191,6 +202,7 @@ namespace ShadowsOfThePast
             }
 
             Rectangle target = player.playerRectangle;
+           
             //camera.followPlayer(player.playerRectangle, new Vector2(_graphics.PreferredBackBufferWidth, _graphics.PreferredBackBufferHeight));
 
         }
@@ -263,7 +275,7 @@ namespace ShadowsOfThePast
                 foreach (var item in background)
                 {
                     Rectangle drect = new(
-                        (int)item.Key.X * display_tilesize + (int)camera.position.X, (int)item.Key.Y * display_tilesize + (int)camera.position.Y, display_tilesize, display_tilesize
+                        (int)item.Key.X * display_tilesize, (int)item.Key.Y * display_tilesize, display_tilesize, display_tilesize
                      );
 
                     int x = item.Value % num_tiles_per_row_png;
@@ -278,7 +290,7 @@ namespace ShadowsOfThePast
                 foreach (var item in platforms)
                 {
                     Rectangle drect = new(
-                        (int)item.Key.X * display_tilesize + (int)camera.position.X, (int)item.Key.Y * display_tilesize + (int)camera.position.Y, display_tilesize, display_tilesize
+                        (int)item.Key.X * display_tilesize, (int)item.Key.Y * display_tilesize, display_tilesize, display_tilesize
                      );
 
                     int x = item.Value % num_tiles_per_row_png;
@@ -293,7 +305,7 @@ namespace ShadowsOfThePast
                 foreach (var item in house)
                 {
                     Rectangle drect = new(
-                        (int)item.Key.X * display_tilesize + (int)camera.position.X, (int)item.Key.Y * display_tilesize + (int)camera.position.Y, display_tilesize, display_tilesize
+                        (int)item.Key.X * display_tilesize, (int)item.Key.Y * display_tilesize, display_tilesize, display_tilesize
                      );
                     //value is the tile index in the tileset
                     int x = item.Value % num_tiles_per_row_png;
@@ -304,11 +316,11 @@ namespace ShadowsOfThePast
                         );
                     _spriteBatch.Draw(textureDic, drect, src, Color.White);
                 }
-                
+                /*
                 foreach (var item in collisions)
                 {
                     Rectangle drect = new(
-                        (int)item.Key.X * display_tilesize + (int)camera.position.X, (int)item.Key.Y * display_tilesize + (int)camera.position.Y, display_tilesize, display_tilesize
+                        (int)item.Key.X * display_tilesize, (int)item.Key.Y * display_tilesize, display_tilesize, display_tilesize
                      );
 
                     int x = item.Value % num_tiles_per_row_png;
@@ -319,7 +331,7 @@ namespace ShadowsOfThePast
                         );
                     _spriteBatch.Draw(collidortext, drect, src, Color.White);
                 }
-                
+                */
                 foreach (var rect in horizontal_intersections)
                 {
 

@@ -52,7 +52,7 @@ namespace ShadowsOfThePast
             healthPoints = 3;
             manaPoints = 10;
             isAlive = true;
-            playerRectangle = new Rectangle(0, 300, 64, 64);
+            playerRectangle = new Rectangle((int)location.X,(int)location.Y, 64, 64);
             velocity = new();
         }
 
@@ -170,7 +170,7 @@ namespace ShadowsOfThePast
                     }
 
                     animationSprite = walkL[activeFrame];
-                    velocity.X = -10;
+                    velocity.X = -15;
 
                     activeFrame++;
                 }
@@ -185,7 +185,7 @@ namespace ShadowsOfThePast
                     }
 
                     animationSprite = walkR[activeFrame];
-                    velocity.X = 10;
+                    velocity.X = 15;
 
                     activeFrame++;
                 }

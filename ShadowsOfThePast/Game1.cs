@@ -54,6 +54,7 @@ public class Game1 : Game
         if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
             Exit();
         // TODO: Add your update logic here
+
         if (_stateManager.CurrentState == _mainMenu && Keyboard.GetState().IsKeyDown(Keys.Enter))
         {
             _stateManager.ChangeState(_levels);
