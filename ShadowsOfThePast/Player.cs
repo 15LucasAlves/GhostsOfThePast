@@ -22,7 +22,10 @@ namespace ShadowsOfThePast
         private ContentManager _content;
 
         public Rectangle playerRectangle;
+        public Vector2 location;
         public Vector2 velocity;
+        private float gravity = 300f;
+
 
         // HP and MP meter so we know how much hits can the player take and how much spells can he cast
         public int healthPoints;
@@ -49,7 +52,7 @@ namespace ShadowsOfThePast
             healthPoints = 3;
             manaPoints = 10;
             isAlive = true;
-            playerRectangle = new Rectangle(0, 0, 64, 64);
+            playerRectangle = new Rectangle(0, 300, 64, 64);
             velocity = new();
         }
 
@@ -106,7 +109,8 @@ namespace ShadowsOfThePast
         {
             KeyboardState keystate = Keyboard.GetState();
             animationCounter++;
-         
+            float deltaTime = (float)gameTime.ElapsedGameTime.TotalSeconds;
+
             velocity = Vector2.Zero;
             velocity.Y = 5.0f;
 
@@ -150,9 +154,8 @@ namespace ShadowsOfThePast
                     {
                         activeFrame = 0;
                     }
-
+                    
                     animationSprite = jumpL[activeFrame];
-
                     activeFrame++;
                 }
 
@@ -167,7 +170,7 @@ namespace ShadowsOfThePast
                     }
 
                     animationSprite = walkL[activeFrame];
-                    velocity.X = -5;
+                    velocity.X = -10;
 
                     activeFrame++;
                 }
@@ -182,7 +185,7 @@ namespace ShadowsOfThePast
                     }
 
                     animationSprite = walkR[activeFrame];
-                    velocity.X = 5;
+                    velocity.X = 10;
 
                     activeFrame++;
                 }

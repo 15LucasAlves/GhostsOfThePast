@@ -60,7 +60,7 @@ public class Game1 : Game
             LoadContent();
         }
 
-        _stateManager.Update(gameTime, GraphicsDevice);
+        _stateManager.Update(gameTime, GraphicsDevice, _graphics);
         base.Update(gameTime);
     }
 

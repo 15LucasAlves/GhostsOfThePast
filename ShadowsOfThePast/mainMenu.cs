@@ -19,7 +19,7 @@ namespace ShadowsOfThePast
         {
 
         }
-        public void Update(GameTime gameTime, GraphicsDevice graphicsDevice)
+        public void Update(GameTime gameTime, GraphicsDevice graphicsDevice, GraphicsDeviceManager graphics)
         {
 
         }

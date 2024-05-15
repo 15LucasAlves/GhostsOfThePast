@@ -9,7 +9,7 @@ namespace ShadowsOfThePast.Interface
 	{
         void Initialize();
         void LoadContent(ContentManager content, SpriteBatch spriteBatch);
-        void Update(GameTime gameTime, GraphicsDevice graphicsDevice);
+        void Update(GameTime gameTime, GraphicsDevice graphicsDevice, GraphicsDeviceManager graphicsDeviceManager);
         void Draw(GameTime gameTime, SpriteBatch spriteBatch);
     }
 }

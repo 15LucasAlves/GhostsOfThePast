@@ -30,9 +30,9 @@ namespace ShadowsOfThePast.Interface
             _currentState.LoadContent(content, spriteBatch);
         }
 
-        public void Update(GameTime gameTime, GraphicsDevice graphicsDevice)
+        public void Update(GameTime gameTime, GraphicsDevice graphicsDevice, GraphicsDeviceManager graphics)
         {
-            _currentState.Update(gameTime, graphicsDevice);
+            _currentState.Update(gameTime, graphicsDevice, graphics);
         }
 
         public void Draw(GameTime gameTime, SpriteBatch spriteBatch)
