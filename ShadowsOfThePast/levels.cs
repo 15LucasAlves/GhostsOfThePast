@@ -21,7 +21,6 @@ namespace ShadowsOfThePast
         private GraphicsDevice _graphicsDevice;
         private SpriteBatch _spriteBatch;
         private ContentManager _content;
-        private Viewport viewport;
 
 
         // Player and Camera variables
@@ -37,16 +36,19 @@ namespace ShadowsOfThePast
         public Dictionary<Vector2, int> house;
         public Dictionary<Vector2, int> collisions;
         public Dictionary<Vector2, int> sidecollisions;
+        public Dictionary<Vector2, int> boxes;
 
         public Texture2D textureDic;
         public Texture2D collidortext;
         public Texture2D playertext;
+        public Texture2D box;
         private SpriteFont font;
         public Song song;
 
         private int counter = 0;
         int score = 0;
         int display_tilesize = 64;
+        public bool ischaronGround;
 
         // Gravity and colision variables
         const float gravity = 9.8f;
@@ -61,7 +63,7 @@ namespace ShadowsOfThePast
             _graphicsDevice = graphicsDevice;
             _spriteBatch = spriteBatch;
             _content = content;
-            player = new Player(_game, _graphicsDevice, _spriteBatch, _content);
+            player = new Player(_game, _graphicsDevice, _spriteBatch, _content, this);
             MainMenu = new mainMenu(_game, _graphicsDevice, _spriteBatch, _content);
 
             var viewportAdapter = new BoxingViewportAdapter(game.Window, graphicsDevice, 800, 480);
@@ -73,6 +75,7 @@ namespace ShadowsOfThePast
             house = LoadMap("../../Data/level1_house.csv");
             collisions = LoadMap("../../Data/level1_collisions.csv");
             sidecollisions = LoadMap("../../Data/sidebound.csv");
+            boxes = LoadMap("../../Data/boxes.csv");
         }
 
         private Dictionary<Vector2, int> LoadMap(string filepath)
@@ -133,7 +136,9 @@ namespace ShadowsOfThePast
             }
 
             collidortext = _content.Load<Texture2D>("collision");
-            
+
+            box = _content.Load<Texture2D>("box");
+
             font = _content.Load<SpriteFont>("File");
 
             song = _content.Load<Song>("audio/lost_and_notfound");
@@ -152,6 +157,13 @@ namespace ShadowsOfThePast
 
             foreach (var rect in horizontal_intersections)
             {
+                //removes box every time the player collides with it and increases score
+                if (boxes.TryGetValue(new Vector2(rect.X, rect.Y), out int val1)){
+                    Vector2 key = new Vector2(rect.X, rect.Y);
+                    score += 100;
+                    boxes.Remove(key);
+                }
+
                 // handle collisions if the tile position exists in the tile map layer.
                 if (collisions.TryGetValue(new Vector2(rect.X, rect.Y), out int _val) || sidecollisions.TryGetValue(new Vector2(rect.X, rect.Y), out int val))
                 {
@@ -190,8 +202,6 @@ namespace ShadowsOfThePast
 
                 if (collisions.TryGetValue(new Vector2(rect.X, rect.Y), out int _val))
                 {
-                    
-
                     Rectangle collision = new Rectangle(
                         rect.X * TILESIZE,
                         rect.Y * TILESIZE,
@@ -199,6 +209,7 @@ namespace ShadowsOfThePast
                         TILESIZE
                     );
                     System.Diagnostics.Debug.WriteLine("intersecting vertically" + rect);
+                    ischaronGround = true;
 
                     if (player.velocity.Y > 0.0f)
                     {
@@ -210,13 +221,29 @@ namespace ShadowsOfThePast
                     }
 
                 }
+                else
+                {
+                    ischaronGround = false;
+                }
+                
             }
 
             Rectangle target = player.playerRectangle;
 
             const float speed = 60;
-            _camera.Move(getDirection() * speed * gameTime.GetElapsedSeconds());
+            //_camera.Move(getDirection() * speed * gameTime.GetElapsedSeconds());
+            //_camera.LookAt(player.playerRectangle.Center.ToVector2());
+            _camera.Zoom = 1.5f;
 
+            Vector2 _cameraTarget = player.playerRectangle.Center.ToVector2();
+
+            // Adjust for half the screen's width and height to keep the player centered
+            _cameraTarget -= new Vector2(_graphics.PreferredBackBufferWidth / 2, _graphics.PreferredBackBufferHeight / 2);
+
+            // Move the camera towards the target position with smoothing
+            float smoothingFactor = 0.03f; // Adjust this value to get the desired smoothing effect
+            _camera.Position += (_cameraTarget - _camera.Position) * smoothingFactor;
+            
         }
 
         public List<Rectangle> getIntersectingTilesHorizontal(Rectangle target)
@@ -353,6 +380,20 @@ namespace ShadowsOfThePast
                         );
                     _spriteBatch.Draw(textureDic, drect, src, Color.White);
                 }
+                foreach (var item in boxes)
+                {
+                    Rectangle drect = new(
+                        (int)item.Key.X * display_tilesize, (int)item.Key.Y * display_tilesize, display_tilesize, display_tilesize
+                     );
+                    //value is the tile index in the tileset
+                    int x = item.Value % num_tiles_per_row_png;
+                    int y = item.Value / num_tiles_per_row_png;
+
+                    Rectangle src = new(
+                        x * tilesize, y * tilesize, tilesize, tilesize
+                        );
+                    _spriteBatch.Draw(box, drect, src, Color.White);
+                }
                 /*
                 foreach (var rect in horizontal_intersections)
                 {
@@ -392,7 +433,7 @@ namespace ShadowsOfThePast
             }
             player.Draw(spriteBatch, Color.White, gameTime);
 
-            _spriteBatch.DrawString(font, "Score:", new Vector2(5, 0), Color.Black);
+            _spriteBatch.DrawString(font, $"Score:{score}", new Vector2(5, 0), Color.Black);
 
             _spriteBatch.End();
         }

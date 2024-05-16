@@ -20,6 +20,7 @@ namespace ShadowsOfThePast
         private GraphicsDevice _graphicsDevice;
         private SpriteBatch _spriteBatch;
         private ContentManager _content;
+        private levels _levels;
 
         public Rectangle playerRectangle;
         public Vector2 location;
@@ -28,8 +29,12 @@ namespace ShadowsOfThePast
         //gravity
         public float jump_Velocity = -10f; 
         public float gravity = 0.5f; 
-        public float vertical_Velocity = 0f; 
+        public float vertical_Velocity = 0f;
 
+        int maxJumps = 1; //maximum number of jumps before touching the ground
+        int jumpCount = 0; //current number of jumps
+
+        Keys lastDirectionKey = Keys.None; //keeps track of last key pressed
 
         // HP and MP meter so we know how much hits can the player take and how much spells can he cast
         public int healthPoints;
@@ -51,7 +56,7 @@ namespace ShadowsOfThePast
 
 
         // Player constructor
-        public Player(Game1 game, GraphicsDevice graphicsDevice, SpriteBatch spriteBatch, ContentManager content)
+        public Player(Game1 game, GraphicsDevice graphicsDevice, SpriteBatch spriteBatch, ContentManager content, levels levels)
         {
             healthPoints = 3;
             manaPoints = 10;
@@ -60,6 +65,7 @@ namespace ShadowsOfThePast
             location.Y = 235;
             playerRectangle = new Rectangle((int)location.X,(int)location.Y, 64, 64);
             velocity = new();
+            _levels = levels;
         }
 
 
@@ -115,13 +121,27 @@ namespace ShadowsOfThePast
         {
             KeyboardState keystate = Keyboard.GetState();
             animationCounter++;
-            float deltaTime = (float)gameTime.ElapsedGameTime.TotalSeconds;
 
             velocity = Vector2.Zero;
-            velocity.Y = 5.0f;
+            velocity.Y = 3.0f;
+
+            if(_levels.ischaronGround == true)
+            {
+                jumpCount = 0;
+            }
+
+            //keeps track of last directional key pressed so u can use just the space bar for jumping
+            if (keystate.IsKeyDown(Keys.Right))
+            {
+                lastDirectionKey = Keys.Right;
+            }
+            else if (keystate.IsKeyDown(Keys.Left))
+            {
+                lastDirectionKey = Keys.Left;
+            }
 
             // Limit the animation speed
-            if (animationCounter == 10)
+            if (animationCounter == 15)
             {
                 // Idle animation
                 if (keystate.GetPressedKeys().Length == 0)
@@ -137,33 +157,28 @@ namespace ShadowsOfThePast
                     activeFrame++;
                 }
 
-                // Jumping Right Animation
-                if (keystate.IsKeyDown(Keys.Space) && keystate.IsKeyDown(Keys.Right))
+                if (keystate.IsKeyDown(Keys.Space) && jumpCount < maxJumps)
                 {
-                    // Reset the animation (only has 4 frames so reset every 4 frames)
+                    //reset the animation (only has 4 frames so reset every 4 frames)
                     if (activeFrame >= 4)
                     {
                         activeFrame = 0;
                     }
+                    velocity.Y = -250f;
 
-                    animationSprite = jumpR[activeFrame];
-
-                    activeFrame++;
-                }
-
-
-                // Jumping Left Animation
-                if (keystate.IsKeyDown(Keys.Space) && keystate.IsKeyDown(Keys.Left))
-                {
-                    if (activeFrame >= 4)
+                    //determine direction of jump based on last directional key pressed
+                    if (lastDirectionKey == Keys.Right)
                     {
-                        activeFrame = 0;
+                        animationSprite = jumpR[activeFrame];
                     }
-                    
-                    animationSprite = jumpL[activeFrame];
-                    activeFrame++;
-                }
+                    else if (lastDirectionKey == Keys.Left)
+                    {
+                        animationSprite = jumpL[activeFrame];
+                    }
 
+                    activeFrame++;
+                    jumpCount++;
+                }
 
                 // Walking Left Animation
                 if (keystate.IsKeyDown(Keys.Left) && keystate.IsKeyUp(Keys.Space))

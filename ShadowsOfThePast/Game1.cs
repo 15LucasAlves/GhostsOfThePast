@@ -34,7 +34,7 @@ public class Game1 : Game
         _stateManager.ChangeState(new levels(this, GraphicsDevice, _spriteBatch, Content));
         _mainMenu = new mainMenu(this, GraphicsDevice, _spriteBatch, Content);
         _levels = new levels(this, GraphicsDevice, _spriteBatch, Content);
-        _player = new Player(this, GraphicsDevice, _spriteBatch, Content); 
+        _player = new Player(this, GraphicsDevice, _spriteBatch, Content, _levels); 
 
         _stateManager.ChangeState(_mainMenu);
 
