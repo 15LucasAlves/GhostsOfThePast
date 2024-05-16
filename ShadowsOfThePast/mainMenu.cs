@@ -21,6 +21,7 @@ namespace ShadowsOfThePast
         public int activeFrame;
         private Vector2 location;
         private Vector2 location_button;
+        private int animationcounter = 0;
 
         public Song song;
 
@@ -46,14 +47,13 @@ namespace ShadowsOfThePast
 
             MediaPlayer.Play(song);
 
-            intro[1] = _content.Load<Texture2D>("intro/intro2");
-            intro[2] = _content.Load<Texture2D>("intro/intro3");
-            intro[3] = _content.Load<Texture2D>("intro/intro4");
-            intro[4] = _content.Load<Texture2D>("intro/intro5");
-            intro[5] = _content.Load<Texture2D>("intro/intro6");
-            intro[6] = _content.Load<Texture2D>("intro/intro7");
-            intro[7] = _content.Load<Texture2D>("intro/intro8");
-            intro[8] = _content.Load<Texture2D>("intro/intro9");
+            intro[1] = _content.Load<Texture2D>("intro/intro3");
+            intro[2] = _content.Load<Texture2D>("intro/intro4");
+            intro[3] = _content.Load<Texture2D>("intro/intro5");
+            intro[4] = _content.Load<Texture2D>("intro/intro6");
+            intro[5] = _content.Load<Texture2D>("intro/intro7");
+            intro[6] = _content.Load<Texture2D>("intro/intro8");
+            intro[7] = _content.Load<Texture2D>("intro/intro9");
             
             intro_animation = intro[0];
             location.X = (_graphicsDevice.Viewport.Width - intro[0].Width) / 2;
@@ -62,15 +62,20 @@ namespace ShadowsOfThePast
 
         public void Update(GameTime gameTime, GraphicsDevice graphicsDevice, GraphicsDeviceManager graphics)
         {
-            /*
-             if (activeFrame >= 8)
-             {
-                 activeFrame = 0;
-             }
+            animationcounter++;
+
+            if (animationcounter == 30)
+            {
+                if (activeFrame >= 7)
+                {
+                    activeFrame = 0;
+                }
+                animationcounter = 0;
+                activeFrame++;
+            }
             
-            activeFrame++;
-            */
-            activeFrame = 0;
+            
+            
             intro_animation = intro[activeFrame];
 
         }

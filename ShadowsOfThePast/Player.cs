@@ -24,7 +24,11 @@ namespace ShadowsOfThePast
         public Rectangle playerRectangle;
         public Vector2 location;
         public Vector2 velocity;
-        private float gravity = 300f;
+
+        //gravity
+        public float jump_Velocity = -10f; 
+        public float gravity = 0.5f; 
+        public float vertical_Velocity = 0f; 
 
 
         // HP and MP meter so we know how much hits can the player take and how much spells can he cast
@@ -52,6 +56,8 @@ namespace ShadowsOfThePast
             healthPoints = 3;
             manaPoints = 10;
             isAlive = true;
+            location.X = 100;
+            location.Y = 235;
             playerRectangle = new Rectangle((int)location.X,(int)location.Y, 64, 64);
             velocity = new();
         }
@@ -115,7 +121,7 @@ namespace ShadowsOfThePast
             velocity.Y = 5.0f;
 
             // Limit the animation speed
-            if (animationCounter == 15)
+            if (animationCounter == 10)
             {
                 // Idle animation
                 if (keystate.GetPressedKeys().Length == 0)
@@ -130,7 +136,6 @@ namespace ShadowsOfThePast
 
                     activeFrame++;
                 }
-
 
                 // Jumping Right Animation
                 if (keystate.IsKeyDown(Keys.Space) && keystate.IsKeyDown(Keys.Right))

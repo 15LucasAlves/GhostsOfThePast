@@ -37,6 +37,8 @@ public class Game1 : Game
         _player = new Player(this, GraphicsDevice, _spriteBatch, Content); 
 
         _stateManager.ChangeState(_mainMenu);
+
+
         base.Initialize();
 
 

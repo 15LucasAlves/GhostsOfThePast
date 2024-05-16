@@ -7,6 +7,8 @@ using System.IO;
 using ShadowsOfThePast.Interface;
 using Microsoft.Xna.Framework.Media;
 using Microsoft.Xna.Framework.Content;
+using MonoGame.Extended;
+using MonoGame.Extended.ViewportAdapters;
 using System.Reflection.Metadata;
 
 
@@ -19,17 +21,22 @@ namespace ShadowsOfThePast
         private GraphicsDevice _graphicsDevice;
         private SpriteBatch _spriteBatch;
         private ContentManager _content;
+        private Viewport viewport;
+
 
         // Player and Camera variables
         Player player;
         mainMenu MainMenu;
 
-        private Vector2 camera;
+        //private Camera camera;
+        private OrthographicCamera _camera;
+
         public Dictionary<Vector2, int> background;
         public Dictionary<Vector2, int> platforms;
         public Dictionary<Vector2, int> props;
         public Dictionary<Vector2, int> house;
         public Dictionary<Vector2, int> collisions;
+        public Dictionary<Vector2, int> sidecollisions;
 
         public Texture2D textureDic;
         public Texture2D collidortext;
@@ -48,7 +55,6 @@ namespace ShadowsOfThePast
         private List<Rectangle> vertical_intersections;
 
 
-
         public levels(Game1 game, GraphicsDevice graphicsDevice, SpriteBatch spriteBatch, ContentManager content)
         {
             _game = game;
@@ -57,12 +63,16 @@ namespace ShadowsOfThePast
             _content = content;
             player = new Player(_game, _graphicsDevice, _spriteBatch, _content);
             MainMenu = new mainMenu(_game, _graphicsDevice, _spriteBatch, _content);
-            camera = Vector2.Zero;
+
+            var viewportAdapter = new BoxingViewportAdapter(game.Window, graphicsDevice, 800, 480);
+            _camera = new OrthographicCamera(viewportAdapter);
+
 
             background = LoadMap("../../Data/level1_background.csv");
             platforms = LoadMap("../../Data/level1_platforms.csv");
             house = LoadMap("../../Data/level1_house.csv");
             collisions = LoadMap("../../Data/level1_collisions.csv");
+            sidecollisions = LoadMap("../../Data/sidebound.csv");
         }
 
         private Dictionary<Vector2, int> LoadMap(string filepath)
@@ -102,7 +112,7 @@ namespace ShadowsOfThePast
 
         public void Initialize()
         {
-
+           
         }
 
         public void LoadContent(ContentManager content, SpriteBatch spriteBatch)
@@ -134,6 +144,7 @@ namespace ShadowsOfThePast
 
         public void Update(GameTime gameTime, GraphicsDevice graphicsDevice, GraphicsDeviceManager _graphics)
         {
+
             player.Update(gameTime, graphicsDevice);
             
             player.playerRectangle.X += (int)player.velocity.X;
@@ -142,7 +153,7 @@ namespace ShadowsOfThePast
             foreach (var rect in horizontal_intersections)
             {
                 // handle collisions if the tile position exists in the tile map layer.
-                if (collisions.TryGetValue(new Vector2(rect.X, rect.Y), out int _val))
+                if (collisions.TryGetValue(new Vector2(rect.X, rect.Y), out int _val) || sidecollisions.TryGetValue(new Vector2(rect.X, rect.Y), out int val))
                 {
 
                     System.Diagnostics.Debug.WriteLine("intersecting horizontally" + rect);
@@ -202,8 +213,9 @@ namespace ShadowsOfThePast
             }
 
             Rectangle target = player.playerRectangle;
-           
-            //camera.followPlayer(player.playerRectangle, new Vector2(_graphics.PreferredBackBufferWidth, _graphics.PreferredBackBufferHeight));
+
+            const float speed = 60;
+            _camera.Move(getDirection() * speed * gameTime.GetElapsedSeconds());
 
         }
 
@@ -262,10 +274,35 @@ namespace ShadowsOfThePast
             return vertical_intersections;
         }
 
+        private Vector2 getDirection()
+        {
+            var direction = Vector2.Zero;
+            var state = Keyboard.GetState();
+            if (state.IsKeyDown(Keys.Down))
+            {
+                direction += Vector2.UnitY;
+            }
+            if (state.IsKeyDown(Keys.Up))
+            {
+                direction -= Vector2.UnitY;
+            }
+            if (state.IsKeyDown(Keys.Left))
+            {
+                direction -= Vector2.UnitX;
+            }
+            if (state.IsKeyDown(Keys.Right))
+            {
+                direction += Vector2.UnitX;
+            }
+            return direction;
+        }
+
+
         public void Draw(GameTime gameTime, SpriteBatch spriteBatch)
         {
             _spriteBatch = spriteBatch;
-            _spriteBatch.Begin();
+            var transformMatrix = _camera.GetViewMatrix();
+            _spriteBatch.Begin(transformMatrix: transformMatrix);
 
             int num_tiles_per_row_png = 7; //number of tiles in a row in the texturedic png
             int tilesize = 64;
@@ -317,21 +354,6 @@ namespace ShadowsOfThePast
                     _spriteBatch.Draw(textureDic, drect, src, Color.White);
                 }
                 /*
-                foreach (var item in collisions)
-                {
-                    Rectangle drect = new(
-                        (int)item.Key.X * display_tilesize, (int)item.Key.Y * display_tilesize, display_tilesize, display_tilesize
-                     );
-
-                    int x = item.Value % num_tiles_per_row_png;
-                    int y = item.Value / num_tiles_per_row_png;
-
-                    Rectangle src = new(
-                        x * tilesize, y * tilesize, tilesize, tilesize
-                        );
-                    _spriteBatch.Draw(collidortext, drect, src, Color.White);
-                }
-                */
                 foreach (var rect in horizontal_intersections)
                 {
 
@@ -362,6 +384,7 @@ namespace ShadowsOfThePast
                     );
 
                 }
+                */
             }
             else
             {
@@ -373,7 +396,7 @@ namespace ShadowsOfThePast
 
             _spriteBatch.End();
         }
-
+        /*
         public void DrawRectHollow(SpriteBatch spriteBatch, Rectangle rect, int thickness)
         {
             spriteBatch.Draw(
@@ -417,6 +440,7 @@ namespace ShadowsOfThePast
                 Color.White
             );
         }
+        */
     }
 }
 
