@@ -186,7 +186,7 @@ namespace ShadowsOfThePast
                 if (collisions.TryGetValue(new Vector2(rect.X, rect.Y), out int _val) || sidecollisions.TryGetValue(new Vector2(rect.X, rect.Y), out int val))
                 {
 
-                    System.Diagnostics.Debug.WriteLine("intersecting horizontally" + rect);
+                    //System.Diagnostics.Debug.WriteLine("intersecting horizontally" + rect);
                     // create temp rect to handle collisions 
                     Rectangle collision = new(
                         rect.X * display_tilesize,
@@ -232,7 +232,7 @@ namespace ShadowsOfThePast
                         TILESIZE,
                         TILESIZE
                     );
-                    System.Diagnostics.Debug.WriteLine("intersecting vertically" + rect);
+                    // System.Diagnostics.Debug.WriteLine("intersecting vertically" + rect);
                     ischaronGround = true;
 
                     if (player.velocity.Y > 0.0f)
@@ -329,7 +329,7 @@ namespace ShadowsOfThePast
                         display_tilesize
 
                     ));
-                    System.Diagnostics.Debug.WriteLine($"Checking tile at ({x}, {y}) with rectangle: {target}");
+                    // System.Diagnostics.Debug.WriteLine($"Checking tile at ({x}, {y}) with rectangle: {target}");
                 }
             }
 

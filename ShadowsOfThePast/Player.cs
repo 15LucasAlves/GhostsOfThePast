@@ -58,8 +58,8 @@ namespace ShadowsOfThePast
         // Player constructor
         public Player(Game1 game, GraphicsDevice graphicsDevice, SpriteBatch spriteBatch, ContentManager content, levels levels)
         {
-            healthPoints = 3;
-            manaPoints = 10;
+            healthPoints = 1;
+            manaPoints = 3;
             isAlive = true;
             location.X = 100;
             location.Y = 235;
