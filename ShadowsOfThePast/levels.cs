@@ -42,10 +42,12 @@ namespace ShadowsOfThePast
         public Dictionary<Vector2, int> teleport;
         public Dictionary<Vector2, int> finalportal;
 
+
         public Texture2D textureDic;
         public Texture2D collidortext;
         public Texture2D playertext;
         public Texture2D box;
+        public Texture2D map;
         private SpriteFont font;
         public Song song;
 
@@ -73,7 +75,7 @@ namespace ShadowsOfThePast
             var viewportAdapter = new BoxingViewportAdapter(game.Window, graphicsDevice, 800, 480);
             _camera = new OrthographicCamera(viewportAdapter);
 
-
+            //level1
             background = LoadMap("../../Data/level1_background.csv");
             platforms = LoadMap("../../Data/level1_platforms.csv");
             house = LoadMap("../../Data/level1_house.csv");
@@ -82,6 +84,7 @@ namespace ShadowsOfThePast
             boxes = LoadMap("../../Data/boxes.csv");
             teleport = LoadMap("../../Data/teleport_portal.csv");
             finalportal = LoadMap("../../Data/final_portal_final portal.csv");
+
         }
 
         private Dictionary<Vector2, int> LoadMap(string filepath)
@@ -132,14 +135,8 @@ namespace ShadowsOfThePast
 
             //load the tileset png used to make the tileset on tiled
             textureDic = _content.Load<Texture2D>("map");
-            if (textureDic == null)
-            {
-                System.Diagnostics.Debug.WriteLine("Failed to load textureDic.");
-            }
-            else
-            {
-                System.Diagnostics.Debug.WriteLine("Successfully loaded textureDic.");
-            }
+
+            map = _content.Load<Texture2D>("map2");
 
             collidortext = _content.Load<Texture2D>("collision");
 
@@ -257,18 +254,57 @@ namespace ShadowsOfThePast
 
             Rectangle target = player.playerRectangle;
 
-            const float speed = 60;
-            //_camera.Move(getDirection() * speed * gameTime.GetElapsedSeconds());
-            //_camera.LookAt(player.playerRectangle.Center.ToVector2());
-            _camera.Zoom = 1.3f;
+            _camera.Zoom = 1.0f;
 
-            _cameraTarget = player.playerRectangle.Center.ToVector2();
 
-            // Adjust for half the screen's width and height to keep the player centered
-            _cameraTarget -= new Vector2(_graphics.PreferredBackBufferWidth / 2, _graphics.PreferredBackBufferHeight / 2);
-
-            // Move the camera towards the target position with smoothing
-            float smoothingFactor = 0.03f; // Adjust this value to get the desired smoothing effect
+            if (player.playerRectangle.Center.X < _graphics.PreferredBackBufferWidth / 2)
+            {
+                if (player.playerRectangle.Y < _graphics.PreferredBackBufferHeight / 2)
+                {
+                    _cameraTarget = new Vector2(40, 0);
+                }
+                else if (player.playerRectangle.Y > 1088 - _graphics.PreferredBackBufferHeight / 2)
+                {
+                    _cameraTarget = new Vector2(40, 1088 - _graphics.PreferredBackBufferHeight);
+                }
+                else
+                {
+                    _cameraTarget = new Vector2(40, player.playerRectangle.Center.Y - _graphics.PreferredBackBufferHeight / 2);
+                }
+            }
+            else if (player.playerRectangle.Center.X > 5120 - _graphics.PreferredBackBufferWidth)
+            {
+                if (player.playerRectangle.Y < _graphics.PreferredBackBufferHeight / 2)
+                {
+                    _cameraTarget = new Vector2(5120 - _graphics.PreferredBackBufferWidth, 0);
+                }
+                else if (player.playerRectangle.Y > 1088 - _graphics.PreferredBackBufferHeight)
+                {
+                    _cameraTarget = new Vector2(5120 - _graphics.PreferredBackBufferWidth, 1088 - _graphics.PreferredBackBufferHeight / 2);
+                }
+                else
+                {
+                    _cameraTarget = new Vector2(5120 - _graphics.PreferredBackBufferWidth, player.playerRectangle.Center.Y - _graphics.PreferredBackBufferHeight / 2);
+                }
+            }
+            else
+            {
+                if (player.playerRectangle.Y < (_graphics.PreferredBackBufferHeight / 2))
+                {
+                    _cameraTarget = new Vector2(player.playerRectangle.Center.X - _graphics.PreferredBackBufferWidth / 2, 0);
+                }
+                else if (player.playerRectangle.Y > 1088 - _graphics.PreferredBackBufferHeight)
+                {
+                    _cameraTarget = new Vector2(player.playerRectangle.Center.X - _graphics.PreferredBackBufferWidth / 2, 1088 - _graphics.PreferredBackBufferHeight);
+                }
+                else
+                {
+                    _cameraTarget = player.playerRectangle.Center.ToVector2();
+                    // Adjust for half the screen's width and height to keep the player centered
+                    _cameraTarget -= new Vector2(_graphics.PreferredBackBufferWidth / 2, _graphics.PreferredBackBufferHeight / 2);
+                }
+            }
+            float smoothingFactor = 0.03f; //adjust this value to get the desired smoothing effect
             _camera.Position += (_cameraTarget - _camera.Position) * smoothingFactor;
             
         }
@@ -327,30 +363,7 @@ namespace ShadowsOfThePast
 
             return vertical_intersections;
         }
-        /*
-        private Vector2 getDirection()
-        {
-            var direction = Vector2.Zero;
-            var state = Keyboard.GetState();
-            if (state.IsKeyDown(Keys.Down))
-            {
-                direction += Vector2.UnitY;
-            }
-            if (state.IsKeyDown(Keys.Up))
-            {
-                direction -= Vector2.UnitY;
-            }
-            if (state.IsKeyDown(Keys.Left))
-            {
-                direction -= Vector2.UnitX;
-            }
-            if (state.IsKeyDown(Keys.Right))
-            {
-                direction += Vector2.UnitX;
-            }
-            return direction;
-        }
-        */
+   
 
         public void Draw(GameTime gameTime, SpriteBatch spriteBatch)
         {
@@ -488,6 +501,7 @@ namespace ShadowsOfThePast
             else
             {
                 //add another level
+
             }
             player.Draw(spriteBatch, Color.White, gameTime);
 
