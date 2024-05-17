@@ -134,7 +134,7 @@ namespace ShadowsOfThePast
             player.LoadContent(_content, _spriteBatch);
 
             //load the tileset png used to make the tileset on tiled
-            textureDic = _content.Load<Texture2D>("map");
+            textureDic = _content.Load<Texture2D>("map1");
 
             map = _content.Load<Texture2D>("map2");
 
@@ -509,6 +509,8 @@ namespace ShadowsOfThePast
 
             _spriteBatch.End();
         }
+
+        
         /*
         public void DrawRectHollow(SpriteBatch spriteBatch, Rectangle rect, int thickness)
         {

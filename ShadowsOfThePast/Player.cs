@@ -27,8 +27,8 @@ namespace ShadowsOfThePast
         public Vector2 velocity;
 
         //gravity
-        public float jump_Velocity = -10f; 
-        public float gravity = 0.5f; 
+        public float jump_Velocity = -10f;
+        public float gravity = 0.5f;
         public float vertical_Velocity = 0f;
 
         int maxJumps = 1; //maximum number of jumps before touching the ground
@@ -63,7 +63,7 @@ namespace ShadowsOfThePast
             isAlive = true;
             location.X = 100;
             location.Y = 235;
-            playerRectangle = new Rectangle((int)location.X,(int)location.Y, 64, 64);
+            playerRectangle = new Rectangle((int)location.X, (int)location.Y, 64, 64);
             velocity = new();
             _levels = levels;
         }
@@ -125,7 +125,7 @@ namespace ShadowsOfThePast
             velocity = Vector2.Zero;
             velocity.Y = 6.0f;
 
-            if(_levels.ischaronGround == true)
+            if (_levels.ischaronGround == true)
             {
                 jumpCount = 0;
             }
