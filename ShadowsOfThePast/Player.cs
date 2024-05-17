@@ -123,7 +123,7 @@ namespace ShadowsOfThePast
             animationCounter++;
 
             velocity = Vector2.Zero;
-            velocity.Y = 3.0f;
+            velocity.Y = 6.0f;
 
             if(_levels.ischaronGround == true)
             {
@@ -141,7 +141,7 @@ namespace ShadowsOfThePast
             }
 
             // Limit the animation speed
-            if (animationCounter == 15)
+            if (animationCounter == 9)
             {
                 // Idle animation
                 if (keystate.GetPressedKeys().Length == 0)
@@ -159,6 +159,7 @@ namespace ShadowsOfThePast
 
                 if (keystate.IsKeyDown(Keys.Space) && jumpCount < maxJumps)
                 {
+
                     //reset the animation (only has 4 frames so reset every 4 frames)
                     if (activeFrame >= 4)
                     {
@@ -221,12 +222,6 @@ namespace ShadowsOfThePast
         {
             Texture2D pixel = new Texture2D(spriteBatch.GraphicsDevice, 1, 1);
             pixel.SetData(new[] { Color.Red });
-
-            spriteBatch.Draw(pixel, new Rectangle(playerRectangle.Left, playerRectangle.Top, playerRectangle.Width, 1), color);
-            spriteBatch.Draw(pixel, new Rectangle(playerRectangle.Left, playerRectangle.Bottom, playerRectangle.Width, 1), color);
-            spriteBatch.Draw(pixel, new Rectangle(playerRectangle.Left, playerRectangle.Top, 1, playerRectangle.Height), color);
-            spriteBatch.Draw(pixel, new Rectangle(playerRectangle.Right, playerRectangle.Top, 1, playerRectangle.Height), color);
-
             spriteBatch.Draw(animationSprite, playerRectangle, color);
 
         }
