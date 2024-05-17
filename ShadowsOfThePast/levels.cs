@@ -505,7 +505,7 @@ namespace ShadowsOfThePast
             }
             player.Draw(spriteBatch, Color.White, gameTime);
 
-            _spriteBatch.DrawString(font, $"Score:{score}", new Vector2(5, 0), Color.Black);
+            _spriteBatch.DrawString(font, $"Score:{score}", _camera.ScreenToWorld(new Vector2(0, 0)), Color.Yellow);
 
             _spriteBatch.End();
         }
