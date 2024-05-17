@@ -21,6 +21,7 @@ namespace ShadowsOfThePast
         private GraphicsDevice _graphicsDevice;
         private SpriteBatch _spriteBatch;
         private ContentManager _content;
+        private StateManager _stateManager;
 
 
         // Player and Camera variables
@@ -29,6 +30,7 @@ namespace ShadowsOfThePast
 
         //private Camera camera;
         private OrthographicCamera _camera;
+        private Vector2 _cameraTarget; 
 
         public Dictionary<Vector2, int> background;
         public Dictionary<Vector2, int> platforms;
@@ -37,6 +39,8 @@ namespace ShadowsOfThePast
         public Dictionary<Vector2, int> collisions;
         public Dictionary<Vector2, int> sidecollisions;
         public Dictionary<Vector2, int> boxes;
+        public Dictionary<Vector2, int> teleport;
+        public Dictionary<Vector2, int> finalportal;
 
         public Texture2D textureDic;
         public Texture2D collidortext;
@@ -76,6 +80,8 @@ namespace ShadowsOfThePast
             collisions = LoadMap("../../Data/level1_collisions.csv");
             sidecollisions = LoadMap("../../Data/sidebound.csv");
             boxes = LoadMap("../../Data/boxes.csv");
+            teleport = LoadMap("../../Data/teleport_portal.csv");
+            finalportal = LoadMap("../../Data/final_portal_final portal.csv");
         }
 
         private Dictionary<Vector2, int> LoadMap(string filepath)
@@ -164,6 +170,21 @@ namespace ShadowsOfThePast
                     boxes.Remove(key);
                 }
 
+                if (teleport.TryGetValue(new Vector2(rect.X, rect.Y), out int val2))
+                {
+                    player.playerRectangle.X = 100;
+                    player.playerRectangle.Y = 235;
+                }
+
+                //changes levels if player hits portal after having a certain score
+                if (finalportal.TryGetValue(new Vector2(rect.X, rect.Y), out int val3))
+                {
+                    if(score >= 70)
+                    {
+                        counter++;
+                    }
+                }
+
                 // handle collisions if the tile position exists in the tile map layer.
                 if (collisions.TryGetValue(new Vector2(rect.X, rect.Y), out int _val) || sidecollisions.TryGetValue(new Vector2(rect.X, rect.Y), out int val))
                 {
@@ -199,6 +220,12 @@ namespace ShadowsOfThePast
 
             foreach (var rect in vertical_intersections)
             {
+                if (boxes.TryGetValue(new Vector2(rect.X, rect.Y), out int val1))
+                {
+                    Vector2 key = new Vector2(rect.X, rect.Y);
+                    score += 100;
+                    boxes.Remove(key);
+                }
 
                 if (collisions.TryGetValue(new Vector2(rect.X, rect.Y), out int _val))
                 {
@@ -233,9 +260,9 @@ namespace ShadowsOfThePast
             const float speed = 60;
             //_camera.Move(getDirection() * speed * gameTime.GetElapsedSeconds());
             //_camera.LookAt(player.playerRectangle.Center.ToVector2());
-            _camera.Zoom = 1.5f;
+            _camera.Zoom = 1.3f;
 
-            Vector2 _cameraTarget = player.playerRectangle.Center.ToVector2();
+            _cameraTarget = player.playerRectangle.Center.ToVector2();
 
             // Adjust for half the screen's width and height to keep the player centered
             _cameraTarget -= new Vector2(_graphics.PreferredBackBufferWidth / 2, _graphics.PreferredBackBufferHeight / 2);
@@ -300,7 +327,7 @@ namespace ShadowsOfThePast
 
             return vertical_intersections;
         }
-
+        /*
         private Vector2 getDirection()
         {
             var direction = Vector2.Zero;
@@ -323,7 +350,7 @@ namespace ShadowsOfThePast
             }
             return direction;
         }
-
+        */
 
         public void Draw(GameTime gameTime, SpriteBatch spriteBatch)
         {
@@ -350,7 +377,37 @@ namespace ShadowsOfThePast
                         );
                     _spriteBatch.Draw(textureDic, drect, src, Color.White);
                 }
-                
+
+                foreach (var item in teleport)
+                {
+                    Rectangle drect = new(
+                        (int)item.Key.X * display_tilesize, (int)item.Key.Y * display_tilesize, display_tilesize, display_tilesize
+                     );
+                    //value is the tile index in the tileset
+                    int x = item.Value % num_tiles_per_row_png;
+                    int y = item.Value / num_tiles_per_row_png;
+
+                    Rectangle src = new(
+                        x * tilesize, y * tilesize, tilesize, tilesize
+                        );
+                    _spriteBatch.Draw(textureDic, drect, src, Color.White);
+                }
+
+                foreach (var item in finalportal)
+                {
+                    Rectangle drect = new(
+                        (int)item.Key.X * display_tilesize, (int)item.Key.Y * display_tilesize, display_tilesize, display_tilesize
+                     );
+                    //value is the tile index in the tileset
+                    int x = item.Value % num_tiles_per_row_png;
+                    int y = item.Value / num_tiles_per_row_png;
+
+                    Rectangle src = new(
+                        x * tilesize, y * tilesize, tilesize, tilesize
+                        );
+                    _spriteBatch.Draw(textureDic, drect, src, Color.White);
+                }
+
                 foreach (var item in platforms)
                 {
                     Rectangle drect = new(
@@ -394,6 +451,7 @@ namespace ShadowsOfThePast
                         );
                     _spriteBatch.Draw(box, drect, src, Color.White);
                 }
+
                 /*
                 foreach (var rect in horizontal_intersections)
                 {
