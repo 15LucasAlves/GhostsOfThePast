@@ -26,15 +26,12 @@ namespace ShadowsOfThePast
         public Vector2 location;
         public Vector2 velocity;
 
-        //gravity
-        public float jump_Velocity = -10f;
-        public float gravity = 0.5f;
-        public float vertical_Velocity = 0f;
-
+        // Jumping variables
         int maxJumps = 1; //maximum number of jumps before touching the ground
         int jumpCount = 0; //current number of jumps
-
-        Keys lastDirectionKey = Keys.None; //keeps track of last key pressed
+        bool playerIsJumping; //if the player is jumping
+        int jumpHeight; //how high the player can jump
+        Vector2 playerPosBJumping; //player position before jumping
 
         // HP and MP meter so we know how much hits can the player take and how much spells can he cast
         public int healthPoints;
@@ -45,6 +42,7 @@ namespace ShadowsOfThePast
         public bool isAlive;
 
         // Animation variables
+        public string sAnimation;
         public int animationCounter;
         public int activeFrame;
         Texture2D animationSprite;
@@ -119,100 +117,140 @@ namespace ShadowsOfThePast
         // To update the player's
         public void Update(GameTime gameTime, GraphicsDevice graphicsDevice)
         {
-            KeyboardState keystate = Keyboard.GetState();
-            animationCounter++;
+            KeyboardState KeyState = Keyboard.GetState();
 
-            velocity = Vector2.Zero;
-            velocity.Y = 6.0f;
-
+            // Reset the player's velocity
+            velocity.X = 0.0f;
+            // constant gravity to pull the player down
+            if (playerIsJumping == false)
+            {
+                velocity.Y = 6.0f;
+            }
+            // Reset the jump count
             if (_levels.ischaronGround == true)
             {
                 jumpCount = 0;
             }
-
-            //keeps track of last directional key pressed so u can use just the space bar for jumping
-            if (keystate.IsKeyDown(Keys.Right))
+            // Get the player's position before jumping and permit the player to move
+            if (playerIsJumping == false)
             {
-                lastDirectionKey = Keys.Right;
-            }
-            else if (keystate.IsKeyDown(Keys.Left))
-            {
-                lastDirectionKey = Keys.Left;
+                playerPosBJumping.X = playerRectangle.Center.X;
+                playerPosBJumping.Y = playerRectangle.Center.Y;
+
+                // Player movement
+                if (KeyState.GetPressedKeys().Length == 0)
+                {
+                    sAnimation = "i";
+                }
+
+                if (KeyState.IsKeyDown(Keys.D))
+                {
+                    velocity.X = 2;
+                    sAnimation = "wR";
+                }
+
+                if (KeyState.IsKeyDown(Keys.A))
+                {
+                    velocity.X = -2;
+                    sAnimation = "wL";
+                }
             }
 
+            if (playerIsJumping == true)
+            {
+                // Player movement while jumping
+                if (KeyState.IsKeyDown(Keys.D))
+                {
+                    velocity.X = 4;
+                }
+
+                if (KeyState.IsKeyDown(Keys.A))
+                {
+                    velocity.X = -4;
+                }
+            }
+
+            if (KeyState.IsKeyDown(Keys.W) && jumpCount < maxJumps)
+            {
+                playerIsJumping = true;
+                velocity.Y = -6.0f;
+                jumpCount++;
+
+                if (velocity.X > 0)
+                {
+                    sAnimation = "jR";
+                }
+                else
+                {
+                    sAnimation = "jL";
+                }
+            }
+
+            if(KeyState.IsKeyDown(Keys.Space))
+            {
+                // Create attack method
+            }
+
+            // Player animation
             // Limit the animation speed
-            if (animationCounter == 9)
+            if (animationCounter == 12)
             {
-                // Idle animation
-                if (keystate.GetPressedKeys().Length == 0)
+                if (sAnimation == "wR" && !playerIsJumping)
                 {
-                    // Reset the animation (only has 2 frames so reset every 2 frames)
-                    if (activeFrame >= 2)
+                    if (activeFrame > 3)
                     {
                         activeFrame = 0;
                     }
-
-                    animationSprite = idle[activeFrame];
-
-                    activeFrame++;
-                }
-
-                if (keystate.IsKeyDown(Keys.Space) && jumpCount < maxJumps)
-                {
-
-                    //reset the animation (only has 4 frames so reset every 4 frames)
-                    if (activeFrame >= 4)
-                    {
-                        activeFrame = 0;
-                    }
-                    velocity.Y = -250f;
-
-                    //determine direction of jump based on last directional key pressed
-                    if (lastDirectionKey == Keys.Right)
-                    {
-                        animationSprite = jumpR[activeFrame];
-                    }
-                    else if (lastDirectionKey == Keys.Left)
-                    {
-                        animationSprite = jumpL[activeFrame];
-                    }
-
-                    activeFrame++;
-                    jumpCount++;
-                }
-
-                // Walking Left Animation
-                if (keystate.IsKeyDown(Keys.Left) && keystate.IsKeyUp(Keys.Space))
-                {
-                    // Reset the animation (only has 4 frames so reset every 4 frames)
-                    if (activeFrame >= 4)
-                    {
-                        activeFrame = 0;
-                    }
-
-                    animationSprite = walkL[activeFrame];
-                    velocity.X = -15;
-
-                    activeFrame++;
-                }
-
-
-                // Walking Right Animation
-                if (keystate.IsKeyDown(Keys.Right) && keystate.IsKeyUp(Keys.Space))
-                {
-                    if (activeFrame >= 4)
-                    {
-                        activeFrame = 0;
-                    }
-
                     animationSprite = walkR[activeFrame];
-                    velocity.X = 15;
-
                     activeFrame++;
                 }
-
-
+                else if (sAnimation == "wL" && !playerIsJumping)
+                {
+                    if (activeFrame > 3)
+                    {
+                        activeFrame = 0;
+                    }
+                    animationSprite = walkL[activeFrame];
+                    activeFrame++;
+                }
+                else if (sAnimation == "jR")
+                {
+                    if (activeFrame > 3)
+                    {
+                        activeFrame = 0;
+                    }
+                    animationSprite = jumpR[activeFrame];
+                    activeFrame++;
+                }
+                else if (sAnimation == "jL")
+                {
+                    if (activeFrame > 3)
+                    {
+                        activeFrame = 0;
+                    }
+                    animationSprite = jumpL[activeFrame];
+                    activeFrame++;
+                }
+                else if (sAnimation == "i" && !playerIsJumping)
+                {
+                    if(activeFrame > 1)
+                    {
+                        activeFrame = 0;
+                    }
+                    animationSprite = idle[activeFrame];
+                    activeFrame++;
+                }
                 animationCounter = 0;
+            }
+            animationCounter++;
+
+            // See if the player completed its jump
+            if (playerIsJumping)
+            {
+                if (playerRectangle.Center.Y <= playerPosBJumping.Y - (playerRectangle.Height * 2) || // adicionar para cair caso esteja a colidir no Y)
+                {
+                    playerIsJumping = false;
+                }
             }
         }
 

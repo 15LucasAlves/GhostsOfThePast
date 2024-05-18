@@ -56,8 +56,7 @@ namespace ShadowsOfThePast
         int display_tilesize = 64;
         public bool ischaronGround;
 
-        // Gravity and colision variables
-        const float gravity = 9.8f;
+        //colision variables
         public int TILESIZE = 64;
         private List<Rectangle> horizontal_intersections;
         private List<Rectangle> vertical_intersections;
@@ -211,7 +210,6 @@ namespace ShadowsOfThePast
             }
 
             // same as horizontal collisions
-
             player.playerRectangle.Y += (int)player.velocity.Y;
             vertical_intersections = getIntersectingTilesVertical(player.playerRectangle);
 
@@ -304,7 +302,7 @@ namespace ShadowsOfThePast
                     _cameraTarget -= new Vector2(_graphics.PreferredBackBufferWidth / 2, _graphics.PreferredBackBufferHeight / 2);
                 }
             }
-            float smoothingFactor = 0.03f; //adjust this value to get the desired smoothing effect
+            float smoothingFactor = 0.05f; //adjust this value to get the desired smoothing effect
             _camera.Position += (_cameraTarget - _camera.Position) * smoothingFactor;
             
         }
