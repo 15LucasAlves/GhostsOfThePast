@@ -14,7 +14,7 @@ namespace ShadowsOfThePast
 {
     public class Player
     {
-        // Depndencies from monogame
+        // Dependencies from monogame
         private Game1 _game;
         private GraphicsDeviceManager _graphics;
         private GraphicsDevice _graphicsDevice;
@@ -22,6 +22,7 @@ namespace ShadowsOfThePast
         private ContentManager _content;
         private levels _levels;
 
+        // Player basic variables
         public Rectangle playerRectangle;
         public Vector2 location;
         public Vector2 velocity;
@@ -30,7 +31,6 @@ namespace ShadowsOfThePast
         int maxJumps = 1; //maximum number of jumps before touching the ground
         int jumpCount = 0; //current number of jumps
         bool playerIsJumping; //if the player is jumping
-        int jumpHeight; //how high the player can jump
         Vector2 playerPosBJumping; //player position before jumping
 
         // HP and MP meter so we know how much hits can the player take and how much spells can he cast
@@ -56,6 +56,7 @@ namespace ShadowsOfThePast
         // Player constructor
         public Player(Game1 game, GraphicsDevice graphicsDevice, SpriteBatch spriteBatch, ContentManager content, levels levels)
         {
+            // Initialize the player's variables
             healthPoints = 1;
             manaPoints = 3;
             isAlive = true;
@@ -71,7 +72,7 @@ namespace ShadowsOfThePast
         {
             _content = content;
 
-            // Load the player's sprites
+            // Load the player's animation sprites
             idle = new Texture2D[2];
             walkR = new Texture2D[4];
             walkL = new Texture2D[4];
@@ -156,6 +157,7 @@ namespace ShadowsOfThePast
                 }
             }
 
+            // Permit the player to move while jumping
             if (playerIsJumping == true)
             {
                 // Player movement while jumping
@@ -170,6 +172,7 @@ namespace ShadowsOfThePast
                 }
             }
 
+            // Jumping logic
             if (KeyState.IsKeyDown(Keys.W) && jumpCount < maxJumps)
             {
                 playerIsJumping = true;
@@ -263,34 +266,5 @@ namespace ShadowsOfThePast
             spriteBatch.Draw(animationSprite, playerRectangle, color);
 
         }
-
-
-        // Player fire spell method
-        public void Attack()
-        {
-            // Check if the player should fire spell
-            if (Keyboard.GetState().IsKeyDown(Keys.Space))
-            {
-                // Fire the spell
-
-
-            }
-        }
-
-
-        // Player take damage method
-        public void TakeDamage(Player player)
-        {
-            // Deal damage to the player
-            player.healthPoints -= 1;
-
-            // Check if the player should die
-            if (player.healthPoints <= 0)
-            {
-                // Player is dead
-                player.isAlive = false;
-            }
-        }
-
     }
 }
