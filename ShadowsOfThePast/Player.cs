@@ -32,6 +32,8 @@ namespace ShadowsOfThePast
         int jumpCount = 0; //current number of jumps
         bool playerIsJumping; //if the player is jumping
         Vector2 playerPosBJumping; //player position before jumping
+        Vector2 playerPosWJumping; //player position while jumping
+        Vector2 playerPosAJumping; //player position after jumping
 
         // HP and MP meter so we know how much hits can the player take and how much spells can he cast
         public int healthPoints;
@@ -135,7 +137,7 @@ namespace ShadowsOfThePast
             // Get the player's position before jumping and permit the player to move
             if (playerIsJumping == false)
             {
-                playerPosBJumping.X = playerRectangle.Center.X;
+                playerPosAJumping.Y = 1;
                 playerPosBJumping.Y = playerRectangle.Center.Y;
 
                 // Player movement
@@ -250,10 +252,14 @@ namespace ShadowsOfThePast
             // See if the player completed its jump
             if (playerIsJumping)
             {
-                if (playerRectangle.Center.Y <= playerPosBJumping.Y - (playerRectangle.Height * 2) || // adicionar para cair caso esteja a colidir no Y)
+                playerPosWJumping.Y = playerRectangle.Center.Y;
+
+                if (playerRectangle.Center.Y <= playerPosBJumping.Y - (playerRectangle.Height * 2) || playerPosAJumping.Y == playerPosWJumping.Y)
                 {
                     playerIsJumping = false;
                 }
+
+                playerPosAJumping.Y = playerPosWJumping.Y;
             }
         }
 

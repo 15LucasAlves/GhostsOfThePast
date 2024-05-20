@@ -23,12 +23,9 @@ namespace ShadowsOfThePast
         private ContentManager _content;
         private StateManager _stateManager;
 
-
-        // Player and Camera variables
         Player player;
         mainMenu MainMenu;
 
-        //private Camera camera;
         private OrthographicCamera _camera;
         private Vector2 _cameraTarget; 
 
@@ -151,9 +148,8 @@ namespace ShadowsOfThePast
 
         public void Update(GameTime gameTime, GraphicsDevice graphicsDevice, GraphicsDeviceManager _graphics)
         {
-
             player.Update(gameTime, graphicsDevice);
-            
+
             player.playerRectangle.X += (int)player.velocity.X;
             horizontal_intersections = getIntersectingTilesHorizontal(player.playerRectangle);
 
@@ -270,7 +266,7 @@ namespace ShadowsOfThePast
                     _cameraTarget = new Vector2(40, player.playerRectangle.Center.Y - _graphics.PreferredBackBufferHeight / 2);
                 }
             }
-            else if (player.playerRectangle.Center.X > 5120 - _graphics.PreferredBackBufferWidth)
+            else if (player.playerRectangle.Center.X > 5120 - _graphics.PreferredBackBufferWidth / 2)
             {
                 if (player.playerRectangle.Y < _graphics.PreferredBackBufferHeight / 2)
                 {
