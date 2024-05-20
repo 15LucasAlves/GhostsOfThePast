@@ -84,15 +84,6 @@ namespace ShadowsOfThePast
             idle[0] = _content.Load<Texture2D>("Idle0");
             idle[1] = _content.Load<Texture2D>("Idle1");
 
-            if (idle[0] == null)
-            {
-                System.Diagnostics.Debug.WriteLine("Failed to load textureDic.");
-            }
-            else
-            {
-                System.Diagnostics.Debug.WriteLine("Successfully loaded textureDic.");
-            }
-
             walkR[0] = _content.Load<Texture2D>("WalksideR0");
             walkR[1] = _content.Load<Texture2D>("WalksideR1");
             walkR[2] = _content.Load<Texture2D>("WalksideR2");

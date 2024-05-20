@@ -24,6 +24,7 @@ namespace ShadowsOfThePast
         private StateManager _stateManager;
 
         Player player;
+        Enemy enemy;
         mainMenu MainMenu;
 
         private OrthographicCamera _camera;
@@ -66,6 +67,7 @@ namespace ShadowsOfThePast
             _spriteBatch = spriteBatch;
             _content = content;
             player = new Player(_game, _graphicsDevice, _spriteBatch, _content, this);
+            enemy = new Enemy(_game, _graphicsDevice, _spriteBatch, _content, this);
             MainMenu = new mainMenu(_game, _graphicsDevice, _spriteBatch, _content);
 
             var viewportAdapter = new BoxingViewportAdapter(game.Window, graphicsDevice, 800, 480);
@@ -128,6 +130,7 @@ namespace ShadowsOfThePast
             _spriteBatch = spriteBatch;
             _content = content;
             player.LoadContent(_content, _spriteBatch);
+            enemy.loadContent(_content, _spriteBatch);
 
             //load the tileset png used to make the tileset on tiled
             textureDic = _content.Load<Texture2D>("map1");
@@ -149,6 +152,7 @@ namespace ShadowsOfThePast
         public void Update(GameTime gameTime, GraphicsDevice graphicsDevice, GraphicsDeviceManager _graphics)
         {
             player.Update(gameTime, graphicsDevice);
+            enemy.Update(gameTime, graphicsDevice);
 
             player.playerRectangle.X += (int)player.velocity.X;
             horizontal_intersections = getIntersectingTilesHorizontal(player.playerRectangle);
@@ -498,6 +502,7 @@ namespace ShadowsOfThePast
 
             }
             player.Draw(spriteBatch, Color.White, gameTime);
+            enemy.Draw(spriteBatch);
 
             _spriteBatch.DrawString(font, $"Score:{score}", _camera.ScreenToWorld(new Vector2(0, 0)), Color.Yellow);
 
