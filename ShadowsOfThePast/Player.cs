@@ -113,6 +113,12 @@ namespace ShadowsOfThePast
         {
             KeyboardState KeyState = Keyboard.GetState();
 
+            // Update player alive status
+            if (healthPoints <= 0)
+            {
+                isAlive = false;
+            }
+
             // Reset the player's velocity
             velocity.X = 0.0f;
             // constant gravity to pull the player down
@@ -258,6 +264,11 @@ namespace ShadowsOfThePast
         // To draw the player
         public void Draw(SpriteBatch spriteBatch, Color color, GameTime gameTime)
         {
+            /*if (isAlive == false)
+            {
+                return;
+            }*/
+
             Texture2D pixel = new Texture2D(spriteBatch.GraphicsDevice, 1, 1);
             pixel.SetData(new[] { Color.Red });
             spriteBatch.Draw(animationSprite, playerRectangle, color);

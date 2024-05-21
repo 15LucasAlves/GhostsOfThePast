@@ -27,15 +27,17 @@ namespace ShadowsOfThePast
         // Enemy drawing / colisions variables 
         public Rectangle enemyRectangle;
         public int colliding;
+        public Vector2 velocity;
 
-        public Enemy(Game1 game, GraphicsDevice graphicsDevice, SpriteBatch spriteBatch, ContentManager content, levels levels)
+        public Enemy(Game1 game, GraphicsDevice graphicsDevice, SpriteBatch spriteBatch, ContentManager content, levels levels, int posX, int postY)
         {
             // Initialize the enemy's variables
             healthPoints = 2;
             isAlive = true;
             gotDamaged = false;
             colliding = 0;
-            enemyRectangle = new Rectangle(150, 200, 64, 64);
+            velocity.X = -1;
+            enemyRectangle = new Rectangle(posX, postY, 64, 64);
         }
 
         public void loadContent(ContentManager content, SpriteBatch spriteBatch)
@@ -59,15 +61,23 @@ namespace ShadowsOfThePast
 
 
         public void Update(GameTime gameTime, GraphicsDevice graphicsDevice)
-        {
+        { 
+            if (velocity.X == 0)
+            {
+                colliding++;
+            }
+
             if (colliding % 2 == 0)
             {
-                enemyRectangle.X -= 1;
+                velocity.X = -1;
+                enemyRectangle.X += (int)velocity.X;
                 isFacingLeft = true;
             }
-            else if (colliding % 2 != 0)
+            else if (colliding % 2 == 1)
             {
-                enemyRectangle.X += 1;
+                velocity.X = 1;
+                enemyRectangle.X += (int)velocity.X;
+                isFacingLeft = false;
             }
 
             // Limit the animation speed
@@ -102,6 +112,7 @@ namespace ShadowsOfThePast
             {
                 isAlive = false;
             }
+
         }
 
 
@@ -109,7 +120,10 @@ namespace ShadowsOfThePast
         {
             if (isAlive)
             {
-                spriteBatch.Draw(animationSprite, enemyRectangle, Color.White);    
+                if (healthPoints == 2)
+                    spriteBatch.Draw(animationSprite, enemyRectangle, Color.White);    
+                else
+                    spriteBatch.Draw(animationSprite, enemyRectangle, Color.Crimson);
             }
         }   
     }

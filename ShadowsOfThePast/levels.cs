@@ -10,6 +10,7 @@ using Microsoft.Xna.Framework.Content;
 using MonoGame.Extended;
 using MonoGame.Extended.ViewportAdapters;
 using System.Reflection.Metadata;
+using System.Diagnostics.SymbolStore;
 
 
 namespace ShadowsOfThePast
@@ -24,11 +25,19 @@ namespace ShadowsOfThePast
         private StateManager _stateManager;
 
         Player player;
-        Enemy enemy;
+        Enemy enemy0;
+        Enemy enemy1;
+        Enemy enemy2;
+        Enemy enemy3;
+        Enemy enemy4;
+        Enemy enemy5;
+        Enemy enemy6;
+        Enemy enemy7;
+        private List<Enemy> enemies;
         mainMenu MainMenu;
 
         private OrthographicCamera _camera;
-        private Vector2 _cameraTarget; 
+        private Vector2 _cameraTarget;
 
         public Dictionary<Vector2, int> background;
         public Dictionary<Vector2, int> platforms;
@@ -58,6 +67,7 @@ namespace ShadowsOfThePast
         public int TILESIZE = 64;
         private List<Rectangle> horizontal_intersections;
         private List<Rectangle> vertical_intersections;
+        private List<Rectangle> horizontal_intersectionsEnemies;
 
 
         public levels(Game1 game, GraphicsDevice graphicsDevice, SpriteBatch spriteBatch, ContentManager content)
@@ -67,7 +77,15 @@ namespace ShadowsOfThePast
             _spriteBatch = spriteBatch;
             _content = content;
             player = new Player(_game, _graphicsDevice, _spriteBatch, _content, this);
-            enemy = new Enemy(_game, _graphicsDevice, _spriteBatch, _content, this);
+            enemies = new List<Enemy>();
+            enemy0 = new Enemy(_game, _graphicsDevice, _spriteBatch, _content, this, 1006, 870);
+            enemy1 = new Enemy(_game, _graphicsDevice, _spriteBatch, _content, this, 1916, 870);
+            enemy2 = new Enemy(_game, _graphicsDevice, _spriteBatch, _content, this, 1280, 358);
+            enemy3 = new Enemy(_game, _graphicsDevice, _spriteBatch, _content, this, 1984, 230);
+            enemy4 = new Enemy(_game, _graphicsDevice, _spriteBatch, _content, this, 2556, 230);
+            enemy5 = new Enemy(_game, _graphicsDevice, _spriteBatch, _content, this, 3028, 166);
+            enemy6 = new Enemy(_game, _graphicsDevice, _spriteBatch, _content, this, 3766, 358);
+            enemy7 = new Enemy(_game, _graphicsDevice, _spriteBatch, _content, this, 3880, 102);
             MainMenu = new mainMenu(_game, _graphicsDevice, _spriteBatch, _content);
 
             var viewportAdapter = new BoxingViewportAdapter(game.Window, graphicsDevice, 800, 480);
@@ -122,15 +140,28 @@ namespace ShadowsOfThePast
 
         public void Initialize()
         {
-           
         }
 
         public void LoadContent(ContentManager content, SpriteBatch spriteBatch)
         {
             _spriteBatch = spriteBatch;
             _content = content;
+
+            enemies.Add(enemy0);
+            enemies.Add(enemy1);
+            enemies.Add(enemy2);
+            enemies.Add(enemy3);
+            enemies.Add(enemy4);
+            enemies.Add(enemy5);
+            enemies.Add(enemy6);
+            enemies.Add(enemy7);
+
             player.LoadContent(_content, _spriteBatch);
-            enemy.loadContent(_content, _spriteBatch);
+
+            foreach (var enemy in enemies)
+            {
+                enemy.loadContent(_content, _spriteBatch);
+            }
 
             //load the tileset png used to make the tileset on tiled
             textureDic = _content.Load<Texture2D>("map1");
@@ -152,15 +183,21 @@ namespace ShadowsOfThePast
         public void Update(GameTime gameTime, GraphicsDevice graphicsDevice, GraphicsDeviceManager _graphics)
         {
             player.Update(gameTime, graphicsDevice);
-            enemy.Update(gameTime, graphicsDevice);
+
+            foreach (var enemy in enemies)
+            {
+                enemy.Update(gameTime, graphicsDevice);
+            }
 
             player.playerRectangle.X += (int)player.velocity.X;
+            System.Diagnostics.Debug.WriteLine(player.playerRectangle.X);
             horizontal_intersections = getIntersectingTilesHorizontal(player.playerRectangle);
 
             foreach (var rect in horizontal_intersections)
             {
                 //removes box every time the player collides with it and increases score
-                if (boxes.TryGetValue(new Vector2(rect.X, rect.Y), out int val1)){
+                if (boxes.TryGetValue(new Vector2(rect.X, rect.Y), out int val1))
+                {
                     Vector2 key = new Vector2(rect.X, rect.Y);
                     score += 100;
                     boxes.Remove(key);
@@ -175,7 +212,7 @@ namespace ShadowsOfThePast
                 //changes levels if player hits portal after having a certain score
                 if (finalportal.TryGetValue(new Vector2(rect.X, rect.Y), out int val3))
                 {
-                    if(score >= 70)
+                    if (score >= 70)
                     {
                         counter++;
                     }
@@ -204,13 +241,50 @@ namespace ShadowsOfThePast
                     {
                         player.playerRectangle.X = collision.Right;
                     }
+                }
+            }
 
+            foreach(var enemy in enemies)
+            {
+                horizontal_intersectionsEnemies = getIntersectingTilesEnemies(enemy.enemyRectangle);
+
+                if(enemy.enemyRectangle.Intersects(player.playerRectangle))
+                {
+                    player.healthPoints--;
                 }
 
+                // Enemy collision horozontally
+                foreach (var rectangle in horizontal_intersectionsEnemies)
+                {
+                    // handle collisions if the tile position exists in the tile map layer.
+                    if (collisions.TryGetValue(new Vector2(rectangle.X, rectangle.Y), out int _val) || sidecollisions.TryGetValue(new Vector2(rectangle.X, rectangle.Y), out int val4))
+                    {
+                        // create temp rect to handle collisions 
+                        Rectangle collision = new(
+                            rectangle.X * display_tilesize,
+                            rectangle.Y * display_tilesize,
+                            display_tilesize,
+                            display_tilesize
+                        );
+
+                        // handle collisions based on the direction the enemy is moving
+                        if (enemy.velocity.X > 0.0f)
+                        {
+                            enemy.velocity.X = 0;
+                            enemy.enemyRectangle.X = collision.Left - enemy.enemyRectangle.Width;
+                        }
+                        else if (enemy.velocity.X < 0.0f)
+                        {
+                            enemy.velocity.X = 0;
+                            enemy.enemyRectangle.X = collision.Right;
+                        }
+                    }
+                }
             }
 
             // same as horizontal collisions
             player.playerRectangle.Y += (int)player.velocity.Y;
+            System.Diagnostics.Debug.WriteLine(player.playerRectangle.Y);
             vertical_intersections = getIntersectingTilesVertical(player.playerRectangle);
 
             foreach (var rect in vertical_intersections)
@@ -247,13 +321,13 @@ namespace ShadowsOfThePast
                 {
                     ischaronGround = false;
                 }
-                
+
             }
 
             Rectangle target = player.playerRectangle;
 
+            // camera logic
             _camera.Zoom = 1.0f;
-
 
             if (player.playerRectangle.Center.X < _graphics.PreferredBackBufferWidth / 2)
             {
@@ -298,14 +372,14 @@ namespace ShadowsOfThePast
                 else
                 {
                     _cameraTarget = player.playerRectangle.Center.ToVector2();
-                    // Adjust for half the screen's width and height to keep the player centered
                     _cameraTarget -= new Vector2(_graphics.PreferredBackBufferWidth / 2, _graphics.PreferredBackBufferHeight / 2);
                 }
             }
-            float smoothingFactor = 0.05f; //adjust this value to get the desired smoothing effect
-            _camera.Position += (_cameraTarget - _camera.Position) * smoothingFactor;
-            
+            float smoothingFactor = 0.05f; // adjust this value to get the desired smoothing effect
+            _camera.Position += (_cameraTarget - _camera.Position) * smoothingFactor; // atualiza a posição da camera
+
         }
+
 
         public List<Rectangle> getIntersectingTilesHorizontal(Rectangle target)
         {
@@ -332,6 +406,32 @@ namespace ShadowsOfThePast
             }
 
             return horizontal_intersections;
+        }
+
+        public List<Rectangle> getIntersectingTilesEnemies(Rectangle enemyRectangle)
+        {  
+            List<Rectangle> horizontal_intersectionsEnemies = new();
+
+            int widthInTiles = (enemyRectangle.Width - (enemyRectangle.Width % TILESIZE)) / TILESIZE;
+            int heightInTiles = (enemyRectangle.Height - (enemyRectangle.Height % TILESIZE)) / TILESIZE;
+
+            for (int x = 0; x <= widthInTiles; x++)
+            {
+                for (int y = 0; y <= heightInTiles; y++)
+                {
+                    horizontal_intersectionsEnemies.Add(new Rectangle(
+
+                        (enemyRectangle.X + x * TILESIZE) / display_tilesize,
+                        (enemyRectangle.Y + y * (TILESIZE - 1)) / display_tilesize,
+                        display_tilesize,
+                        display_tilesize
+
+                    ));
+                    // System.Diagnostics.Debug.WriteLine($"Checking tile at ({x}, {y}) with rectangle: {target}");
+                }
+            }
+           
+            return horizontal_intersectionsEnemies;
         }
 
         public List<Rectangle> getIntersectingTilesVertical(Rectangle target)
@@ -462,99 +562,25 @@ namespace ShadowsOfThePast
                         );
                     _spriteBatch.Draw(box, drect, src, Color.White);
                 }
-
-                /*
-                foreach (var rect in horizontal_intersections)
-                {
-
-                    DrawRectHollow(
-                        _spriteBatch,
-                        new Rectangle(
-                            rect.X * TILESIZE,
-                            rect.Y * TILESIZE,
-                            TILESIZE,
-                            TILESIZE
-                        ),
-                        4
-                    );
-
-                }
-                foreach (var rect in vertical_intersections)
-                {
-
-                    DrawRectHollow(
-                        _spriteBatch,
-                        new Rectangle(
-                            rect.X * TILESIZE,
-                            rect.Y * TILESIZE,
-                            TILESIZE,
-                            TILESIZE
-                        ),
-                        4
-                    );
-
-                }
-                */
             }
             else
             {
                 //add another level
-
             }
-            player.Draw(spriteBatch, Color.White, gameTime);
-            enemy.Draw(spriteBatch);
 
-            _spriteBatch.DrawString(font, $"Score:{score}", _camera.ScreenToWorld(new Vector2(0, 0)), Color.Yellow);
+            player.Draw(spriteBatch, Color.White, gameTime);
+
+            foreach (var enemy in enemies)
+            {
+                enemy.Draw(spriteBatch);
+            }
+
+            _spriteBatch.DrawString(font, $"Score: {score}", _camera.ScreenToWorld(new Vector2(10, 10)), Color.Yellow);
+            _spriteBatch.DrawString(font, $"HP: {player.healthPoints}", _camera.ScreenToWorld(new Vector2(10, 25)), Color.Red);
+            _spriteBatch.DrawString(font, $"MP: {player.manaPoints}", _camera.ScreenToWorld(new Vector2(10, 40)), Color.Blue);
 
             _spriteBatch.End();
         }
-
-        
-        /*
-        public void DrawRectHollow(SpriteBatch spriteBatch, Rectangle rect, int thickness)
-        {
-            spriteBatch.Draw(
-                collidortext,
-                new Rectangle(
-                    rect.X,
-                    rect.Y,
-                    rect.Width,
-                    thickness
-                ),
-                Color.White
-            );
-            spriteBatch.Draw(
-                collidortext,
-                new Rectangle(
-                    rect.X,
-                    rect.Bottom - thickness,
-                    rect.Width,
-                    thickness
-                ),
-                Color.White
-            );
-            spriteBatch.Draw(
-                collidortext,
-                new Rectangle(
-                    rect.X,
-                    rect.Y,
-                    thickness,
-                    rect.Height
-                ),
-                Color.White
-            );
-            spriteBatch.Draw(
-                collidortext,
-                new Rectangle(
-                    rect.Right - thickness,
-                    rect.Y,
-                    thickness,
-                    rect.Height
-                ),
-                Color.White
-            );
-        }
-        */
     }
 }
 
