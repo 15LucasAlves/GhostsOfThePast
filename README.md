@@ -35,7 +35,7 @@ Preview:
 
 ## Interface folder:
 
-###IGameState.cs###
+### IGameState.cs ###
 
 	Cria uma interface com as funções essenciais para cada estado de jogo, que é depois inherited pelas outras classes. 
 ```	
@@ -45,7 +45,7 @@ Preview:
         void Draw(GameTime gameTime, SpriteBatch spriteBatch);
 ```
 
-###StateManager.cs###
+### StateManager.cs ###
 
 	Estabelece um State Manager que permite mudar entre o main menu, levels, end screen etc.. Dentro do State Manager cada função chama a correspondente ao estado em que o jogo se encontra.
 
@@ -65,17 +65,17 @@ Preview:
             _currentState.Initialize();
         }
 ```
-##Data folder(does not show up on GitHub):##
+## Data folder(does not show up on GitHub): ##
 
 	Contém os .csv que são usados para dar Load do nível e colisões. Este ficheiros .csv foram feitos com recurso a um programa chamado Tiled, que permite a criação/utilização de tilesets criados a partir de pngs. Funciona através da atribuição de um número a uma localização, número esse que corresponde a uma tile no tileset.
 
-##Outside of Folders:##
+## Outside of Folders: ##
 
-###Game1.cs####
+### Game1.cs ####
 
 	Default file do MonoGame. Aqui inicializamos todos os files a serem usados e é aqui que o State Manager muda entre o Main Menu e o nível.
 
-###levels.cs####
+### levels.cs ####
 
 	Ficheiro que contém tudo o que é necessário para o nível funcionar. Isto inclui, então, o Load das texturas/tilesets e dos .csv files. O programa dá load e lê os mesmos através da utilização de vários dicionários (de uma maneira geral, um para cada layer, ou um para cada .csv). O ficheiro .csv é lido, com recurso a uma função, que dá parse dos valores e utiliza uma virgula para os delimitar, se o número for maior que -1, ou seja, a posição não está vazia, é então adicionado ao dicionário o valor lido, sendo este o item e o vector 2(posição) que é a key.
 
@@ -181,8 +181,8 @@ Preview:
                 }
 ```
 
-###Player.cs###
+### Player.cs ###
 
   Na player class inicializamos todos os atributos do player, lidamos com o movimento, incluindo o salto, com o ataque, a vida e mana. É ainda nesta classe que lidamos com as animações e definimos a velocidade das mesmas.
 
-###Enemies.cs###
+### Enemies.cs ###
