@@ -190,7 +190,7 @@ namespace ShadowsOfThePast
             }
 
             player.playerRectangle.X += (int)player.velocity.X;
-            System.Diagnostics.Debug.WriteLine(player.playerRectangle.X);
+            //System.Diagnostics.Debug.WriteLine(player.playerRectangle.X);
             horizontal_intersections = getIntersectingTilesHorizontal(player.playerRectangle);
 
             foreach (var rect in horizontal_intersections)
@@ -253,6 +253,15 @@ namespace ShadowsOfThePast
                     player.healthPoints--;
                 }
 
+                foreach(var magic in player.magics)
+                {
+                    if(enemy.enemyRectangle.Intersects(magic.magicRectangle))
+                    {
+                        enemy.healthPoints--;
+                        magic.faded = true;
+                    }
+                }
+
                 // Enemy collision horozontally
                 foreach (var rectangle in horizontal_intersectionsEnemies)
                 {
@@ -284,7 +293,7 @@ namespace ShadowsOfThePast
 
             // same as horizontal collisions
             player.playerRectangle.Y += (int)player.velocity.Y;
-            System.Diagnostics.Debug.WriteLine(player.playerRectangle.Y);
+            //System.Diagnostics.Debug.WriteLine(player.playerRectangle.Y);
             vertical_intersections = getIntersectingTilesVertical(player.playerRectangle);
 
             foreach (var rect in vertical_intersections)

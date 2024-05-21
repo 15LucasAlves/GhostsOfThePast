@@ -10,6 +10,7 @@ using System.Reflection.Metadata;
 using System.Text;
 using System.Threading.Tasks;
 
+
 namespace ShadowsOfThePast
 {
     public class Player
@@ -53,7 +54,13 @@ namespace ShadowsOfThePast
         public Texture2D[] walkL;
         public Texture2D[] jumpR;
         public Texture2D[] jumpL;
+        public Texture2D[] attackR;
+        public Texture2D[] attackL;
 
+        // Attack Variables
+        int dir;
+        public List<Magic> magics;
+        int magicCounter;
 
         // Player constructor
         public Player(Game1 game, GraphicsDevice graphicsDevice, SpriteBatch spriteBatch, ContentManager content, levels levels)
@@ -67,6 +74,7 @@ namespace ShadowsOfThePast
             playerRectangle = new Rectangle((int)location.X, (int)location.Y, 64, 64);
             velocity = new();
             _levels = levels;
+            magicCounter = 0;
         }
 
 
@@ -80,6 +88,8 @@ namespace ShadowsOfThePast
             walkL = new Texture2D[4];
             jumpR = new Texture2D[4];
             jumpL = new Texture2D[4];
+            attackR = new Texture2D[6];
+            attackL = new Texture2D[6];
 
             idle[0] = _content.Load<Texture2D>("Idle0");
             idle[1] = _content.Load<Texture2D>("Idle1");
@@ -104,7 +114,23 @@ namespace ShadowsOfThePast
             jumpL[2] = _content.Load<Texture2D>("jumpL2");
             jumpL[3] = _content.Load<Texture2D>("jumpL3");
 
+            attackR[0] = _content.Load<Texture2D>("attackR0");
+            attackR[1] = _content.Load<Texture2D>("attackR1");
+            attackR[2] = _content.Load<Texture2D>("attackR2");
+            attackR[3] = _content.Load<Texture2D>("attackR3");
+            attackR[4] = _content.Load<Texture2D>("attackR4");
+            attackR[5] = _content.Load<Texture2D>("attackR5");
+
+            attackL[0] = _content.Load<Texture2D>("attackL0");
+            attackL[1] = _content.Load<Texture2D>("attackL1");
+            attackL[2] = _content.Load<Texture2D>("attackL2");
+            attackL[3] = _content.Load<Texture2D>("attackL3");
+            attackL[4] = _content.Load<Texture2D>("attackL4");
+            attackL[5] = _content.Load<Texture2D>("attackL5");
+
             animationSprite = idle[0];
+
+            magics = new List<Magic>();
         }
 
 
@@ -147,14 +173,37 @@ namespace ShadowsOfThePast
                 {
                     velocity.X = 2;
                     sAnimation = "wR";
+                    dir = 1;
                 }
 
                 if (KeyState.IsKeyDown(Keys.A))
                 {
                     velocity.X = -2;
                     sAnimation = "wL";
+                    dir = 0;
+                }
+
+                if (KeyState.IsKeyDown(Keys.Space) && manaPoints > 0 && magicCounter > 30)
+                {
+                    if (velocity.X > 0)
+                    {
+                        sAnimation = "aR";
+                    }
+                    else if (velocity.X < 0)
+                    {
+                        sAnimation = "aL";
+                    }
+
+                    Magic magic = new Magic(playerRectangle.Center.X, playerRectangle.Center.Y, dir);
+                    magic.loadContent(_content, _spriteBatch);
+                    magics.Add(magic);
+
+                    manaPoints--;
+                    magicCounter = 0;
                 }
             }
+
+            magicCounter++;
 
             // Permit the player to move while jumping
             if (playerIsJumping == true)
@@ -186,11 +235,6 @@ namespace ShadowsOfThePast
                 {
                     sAnimation = "jL";
                 }
-            }
-
-            if(KeyState.IsKeyDown(Keys.Space))
-            {
-                // Create attack method
             }
 
             // Player animation
@@ -242,6 +286,24 @@ namespace ShadowsOfThePast
                     animationSprite = idle[activeFrame];
                     activeFrame++;
                 }
+                else if(sAnimation == "aR")
+                {
+                    if (activeFrame > 5)
+                    {
+                        activeFrame = 0;
+                    }
+                    animationSprite = attackR[activeFrame];
+                    activeFrame++;
+                }
+                else if (sAnimation == "aL")
+                {
+                    if (activeFrame > 5)
+                    {
+                        activeFrame = 0;
+                    }
+                    animationSprite = attackL[activeFrame];
+                    activeFrame++;
+                }
                 animationCounter = 0;
             }
             animationCounter++;
@@ -258,6 +320,20 @@ namespace ShadowsOfThePast
 
                 playerPosAJumping.Y = playerPosWJumping.Y;
             }
+
+            if(magics != null)
+            {
+                foreach (var magic in magics.ToList())
+                {
+                    magic.update(gameTime, graphicsDevice);
+
+                    if (magic.faded == true)
+                    {
+                        magics.Remove(magic);
+                        manaPoints++;
+                    }
+                }
+            }
         }
 
 
@@ -268,6 +344,14 @@ namespace ShadowsOfThePast
             {
                 return;
             }*/
+
+            if (magics != null)
+            {
+                foreach (var magic in magics)
+                {
+                    magic.draw(spriteBatch);
+                }
+            }
 
             Texture2D pixel = new Texture2D(spriteBatch.GraphicsDevice, 1, 1);
             pixel.SetData(new[] { Color.Red });

@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace ShadowsOfThePast
 {
-    internal class Enemy
+    public class Enemy
     {
         // Enemy basic variables
         public int healthPoints;
