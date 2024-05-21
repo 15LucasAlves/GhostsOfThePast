@@ -1,6 +1,6 @@
 # ShadowsOfThePast
-# Trabalho 2 - Técnicas de Desenvolvimento de VideoJogos
-Repositório do segundo trabalho de TDVJ
+## Trabalho 2 - Técnicas de Desenvolvimento de VideoJogos
+### Repositório do segundo trabalho de TDVJ
 
 Jogo criado usando a framework do MonoGame.
 
@@ -10,9 +10,10 @@ Linguagem de escolha: C#
 
 Framework: MonoGame
 
-Breve descrição: Encontra os teleportes e acompanha o Spiky numa viagem pelas estações. Mata inimigos e coleta artifactos de forma a obteres o score necessário para o Spiky poder avançar de nível e descobrir os segredos do tempo.
+### Breve descrição:
+Encontra os teleportes e acompanha o Spiky numa viagem pelas estações. Mata inimigos e coleta artifactos de forma a obteres o score necessário para o Spiky poder avançar de nível e descobrir os segredos do tempo.
 
-Preview:
+### Preview:
 
 ![preview](preview.png)
 
