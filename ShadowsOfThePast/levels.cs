@@ -11,6 +11,7 @@ using MonoGame.Extended;
 using MonoGame.Extended.ViewportAdapters;
 using System.Reflection.Metadata;
 using System.Diagnostics.SymbolStore;
+using System.Linq;
 
 
 namespace ShadowsOfThePast
@@ -184,9 +185,14 @@ namespace ShadowsOfThePast
         {
             player.Update(gameTime, graphicsDevice);
 
-            foreach (var enemy in enemies)
+            foreach (var enemy in enemies.ToList())
             {
                 enemy.Update(gameTime, graphicsDevice);
+
+                if(enemy.isAlive == false)
+                {
+                    enemies.Remove(enemy);
+                }
             }
 
             player.playerRectangle.X += (int)player.velocity.X;
