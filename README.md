@@ -189,3 +189,5 @@ Contém os .csv que são usados para dar Load do nível e colisões. Este fichei
   Na player class inicializamos todos os atributos do player, lidamos com o movimento, incluindo o salto, com o ataque, a vida e mana. É ainda nesta classe que lidamos com as animações e definimos a velocidade das mesmas.
 
 ### Enemies.cs ###
+
+A class dos inimigos funciona como uma player class, com a excepção de que eles se movem sozinhos e sempre que existe uma colisão entre o inimigo e o mapa a velocidade é invertida.
