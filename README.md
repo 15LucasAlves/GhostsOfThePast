@@ -1,4 +1,4 @@
-# ShadowsOfThePast
+# GhostsOfThePast
 ## Trabalho 2 - Técnicas de Desenvolvimento de VideoJogos
 ### Repositório do segundo trabalho de TDVJ
 
