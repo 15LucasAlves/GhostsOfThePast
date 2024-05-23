@@ -18,6 +18,7 @@ public class Game1 : Game
     private mainMenu _mainMenu;
     private levels _levels;
     private Player _player;
+    private deathscreen _deathscreen;
     int counter = 1;
 
     public Game1()
@@ -32,9 +33,11 @@ public class Game1 : Game
         // TODO: Add your initialization logic here
         _stateManager = new StateManager();
         _stateManager.ChangeState(new levels(this, GraphicsDevice, _spriteBatch, Content));
+        _stateManager.ChangeState(new deathscreen(this, GraphicsDevice, _spriteBatch, Content));
         _mainMenu = new mainMenu(this, GraphicsDevice, _spriteBatch, Content);
         _levels = new levels(this, GraphicsDevice, _spriteBatch, Content);
-        _player = new Player(this, GraphicsDevice, _spriteBatch, Content, _levels); 
+        _player = new Player(this, GraphicsDevice, _spriteBatch, Content, _levels);
+        _deathscreen = new deathscreen(this, GraphicsDevice, _spriteBatch, Content);
 
         _stateManager.ChangeState(_mainMenu);
 
@@ -48,6 +51,8 @@ public class Game1 : Game
     {
         _spriteBatch = new SpriteBatch(GraphicsDevice);
         _stateManager.LoadContent(Content, _spriteBatch);
+        _deathscreen.LoadContent(Content, _spriteBatch);
+
         // TODO: use this.Content to load your game content here
     }
 
@@ -60,6 +65,19 @@ public class Game1 : Game
         if (_stateManager.CurrentState == _mainMenu && Keyboard.GetState().IsKeyDown(Keys.Enter))
         {
             _stateManager.ChangeState(_levels);
+            LoadContent();
+        }
+
+        if (_stateManager.CurrentState == _deathscreen && Keyboard.GetState().IsKeyDown(Keys.Enter))
+        {
+            _levels.Reset();
+            _stateManager.ChangeState(_levels);
+            LoadContent();
+        }
+
+        if (_stateManager.CurrentState == _levels && _levels.endgame == true)
+        {
+            _stateManager.ChangeState(_deathscreen);
             LoadContent();
         }
 

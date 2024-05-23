@@ -157,6 +157,12 @@
 /processorParam:TextureFormat=Color
 /build:attackR5.PNG
 
+#begin audio/horror-lose-2028.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:audio/horror-lose-2028.wav
+
 #begin audio/into_the_woods.mp3
 /importer:Mp3Importer
 /processor:SongProcessor
@@ -667,4 +673,16 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:WalksideR3.png
+
+#begin youdied_.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:youdied_.png
 

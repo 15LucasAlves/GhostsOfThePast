@@ -24,6 +24,8 @@ namespace ShadowsOfThePast
         private SpriteBatch _spriteBatch;
         private ContentManager _content;
         private StateManager _stateManager;
+        private deathscreen _deathscreen;
+        public bool endgame;
 
         Player player;
         Enemy enemy0;
@@ -88,6 +90,8 @@ namespace ShadowsOfThePast
             enemy6 = new Enemy(_game, _graphicsDevice, _spriteBatch, _content, this, 3766, 358);
             enemy7 = new Enemy(_game, _graphicsDevice, _spriteBatch, _content, this, 3880, 102);
             MainMenu = new mainMenu(_game, _graphicsDevice, _spriteBatch, _content);
+            _deathscreen = new deathscreen(_game, _graphicsDevice, _spriteBatch, _content);
+            _stateManager = new StateManager();
 
             var viewportAdapter = new BoxingViewportAdapter(game.Window, graphicsDevice, 800, 480);
             _camera = new OrthographicCamera(viewportAdapter);
@@ -101,7 +105,7 @@ namespace ShadowsOfThePast
             boxes = LoadMap("../../Data/boxes.csv");
             teleport = LoadMap("../../Data/teleport_portal.csv");
             finalportal = LoadMap("../../Data/final_portal_final portal.csv");
-
+            endgame = false;
         }
 
         private Dictionary<Vector2, int> LoadMap(string filepath)
@@ -141,6 +145,39 @@ namespace ShadowsOfThePast
 
         public void Initialize()
         {
+            endgame = false;
+            //reset variables
+            score = 0;
+
+            player = new Player(_game, _graphicsDevice, _spriteBatch, _content, this);
+            enemies = new List<Enemy>();
+            enemy0 = new Enemy(_game, _graphicsDevice, _spriteBatch, _content, this, 1006, 870);
+            enemy1 = new Enemy(_game, _graphicsDevice, _spriteBatch, _content, this, 1916, 870);
+            enemy2 = new Enemy(_game, _graphicsDevice, _spriteBatch, _content, this, 1280, 358);
+            enemy3 = new Enemy(_game, _graphicsDevice, _spriteBatch, _content, this, 1984, 230);
+            enemy4 = new Enemy(_game, _graphicsDevice, _spriteBatch, _content, this, 2556, 230);
+            enemy5 = new Enemy(_game, _graphicsDevice, _spriteBatch, _content, this, 3028, 166);
+            enemy6 = new Enemy(_game, _graphicsDevice, _spriteBatch, _content, this, 3766, 358);
+            enemy7 = new Enemy(_game, _graphicsDevice, _spriteBatch, _content, this, 3880, 102);
+            player.healthPoints = 1;
+
+            boxes = LoadMap("../../Data/boxes.csv");
+            _spriteBatch.Begin();
+            foreach (var item in boxes)
+            {
+                Rectangle drect = new(
+                    (int)item.Key.X * display_tilesize, (int)item.Key.Y * display_tilesize, display_tilesize, display_tilesize
+                 );
+                //value is the tile index in the tileset
+                int x = item.Value % 7;
+                int y = item.Value / 7;
+
+                Rectangle src = new(
+                    x * 64, y * 64, 64, 64
+                    );
+                _spriteBatch.Draw(box, drect, src, Color.White);
+            }
+            _spriteBatch.End();
         }
 
         public void LoadContent(ContentManager content, SpriteBatch spriteBatch)
@@ -184,6 +221,11 @@ namespace ShadowsOfThePast
         public void Update(GameTime gameTime, GraphicsDevice graphicsDevice, GraphicsDeviceManager _graphics)
         {
             player.Update(gameTime, graphicsDevice);
+
+            if (player.isAlive == false)
+            {
+                endgame = true;
+            }
 
             foreach (var enemy in enemies.ToList())
             {
@@ -595,6 +637,18 @@ namespace ShadowsOfThePast
             _spriteBatch.DrawString(font, $"MP: {player.manaPoints}", _camera.ScreenToWorld(new Vector2(10, 40)), Color.Blue);
 
             _spriteBatch.End();
+        }
+
+        public void Reset()
+        {
+            foreach (Enemy enemy in enemies)
+            {
+                enemy.isAlive = false;
+            }
+
+            boxes.Clear();
+
+            Initialize();
         }
     }
 }
