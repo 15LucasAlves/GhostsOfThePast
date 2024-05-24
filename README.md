@@ -70,7 +70,7 @@ Estabelece um State Manager que permite mudar entre o main menu, levels, end scr
 ```
 ## Data folder(does not show up on GitHub): ##
 
-![prev](prev.png)
+![prev](prev.jpg)
 
 Contém os .csv que são usados para dar Load do nível e colisões. Este ficheiros .csv foram feitos com recurso a um programa chamado Tiled, que permite a criação/utilização de tilesets criados a partir de pngs. Funciona através da atribuição de um número a uma localização, número esse que corresponde a uma tile no tileset.
 
