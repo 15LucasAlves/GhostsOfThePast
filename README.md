@@ -9,6 +9,7 @@ Realizado por: Diana Silva 29625 e Lucas Alves 27922
 Linguagem de escolha: C#
 
 Framework: MonoGame
+Com uso do Monogame.Framework.Extended
 
 ### Breve descrição:
 Encontra os teleportes e acompanha o Spiky numa viagem pelas estações. Mata inimigos e coleta artifactos de forma a obteres o score necessário para o Spiky poder avançar de nível e descobrir os segredos do tempo.
@@ -68,6 +69,8 @@ Estabelece um State Manager que permite mudar entre o main menu, levels, end scr
         }
 ```
 ## Data folder(does not show up on GitHub): ##
+
+![prev](prev.png)
 
 Contém os .csv que são usados para dar Load do nível e colisões. Este ficheiros .csv foram feitos com recurso a um programa chamado Tiled, que permite a criação/utilização de tilesets criados a partir de pngs. Funciona através da atribuição de um número a uma localização, número esse que corresponde a uma tile no tileset.
 
@@ -204,3 +207,6 @@ A class dos inimigos funciona como uma player class, com a excepção de que ele
 ### Deathscreen.cs ###
 
 A deathscreen é triggered quando o player morre, permitindo ao jogador carregar no enter para dar reset ao jogo e tentar outra vez.
+
+### Créditos
+https://www.youtube.com/@codingwithsphere
