@@ -107,7 +107,7 @@ Contém os .csv que são usados para dar Load do nível e colisões. Este fichei
             return result;
         }
 ```
-  As colisões são detetadas com recurso ao collisions.csv e aos dicionários criados. Isto é feito a partir da verificação da intercepção entre o retângulo do player com a tile de colisão. Existem 2 funções responsáveis pela deteção: public List<Rectangle> getIntersectingTilesHorizontal(Rectangle target), public List<Rectangle> getIntersectingTilesVertical(Rectangle target). 
+  As colisões são detetadas com recurso ao collisions.csv e aos dicionários criados. Isto é feito a partir da verificação da interseção entre o retângulo do player com a tile de colisão. Existem 2 funções responsáveis pela deteção: public List<Rectangle> getIntersectingTilesHorizontal(Rectangle target), public List<Rectangle> getIntersectingTilesVertical(Rectangle target). 
 
 ```ruby
 
